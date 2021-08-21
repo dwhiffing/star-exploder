@@ -1,6 +1,6 @@
 import { Button, Text } from 'kontra'
 
-export const createMenu = (onDown) => {
+export const MenuScene = (onDown) => {
   let text = Text({
     text: 'Space',
     font: '150px Arial',
@@ -37,13 +37,11 @@ export const createMenu = (onDown) => {
     shutdown() {
       button.destroy()
     },
-    space: {
-      update() {},
-      render() {
-        text.render()
-        text2.render()
-        button.render()
-      },
+    update() {},
+    render() {
+      text.render()
+      text2.render()
+      button.render()
     },
   }
 }

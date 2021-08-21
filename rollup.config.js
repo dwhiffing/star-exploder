@@ -1,9 +1,9 @@
-import kontra from 'rollup-plugin-kontra'
 import commonjs from '@rollup/plugin-commonjs'
 import { nodeResolve } from '@rollup/plugin-node-resolve'
 import html from 'rollup-plugin-html-bundle'
 import serve from 'rollup-plugin-serve'
 import livereload from 'rollup-plugin-livereload'
+// import kontra from 'rollup-plugin-kontra'
 
 export default {
   input: 'src/index.js',
@@ -12,7 +12,7 @@ export default {
     format: 'esm',
   },
   plugins: [
-    kontra({ gameObject: { group: true } }),
+    // kontra(),
     commonjs(),
     nodeResolve(),
     html({
