@@ -46,7 +46,7 @@ export const Stars = () => {
   }
 }
 
-const STAR_COUNT = 9 * 200
+const STAR_COUNT = 9 * 50
 const COLORS = [
   'white',
   'white',
