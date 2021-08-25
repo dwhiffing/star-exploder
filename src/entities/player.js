@@ -5,7 +5,7 @@ export const Player = ({ x, y }) => {
     x,
     y,
     anchor: { x: 0.5, y: 0.5 },
-    color: 'red',
+    color: 'blue',
     width: 40,
     height: 40,
   })
