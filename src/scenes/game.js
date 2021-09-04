@@ -1,4 +1,4 @@
-import { Scene } from 'kontra'
+import { collides, Scene } from 'kontra'
 import { Player, Stars, Bullets } from '../entities'
 import { Enemies } from '../entities/enemies'
 
@@ -15,6 +15,16 @@ export const GameScene = ({ canvas }) => {
   let bullets = Bullets(scene)
   let enemies = Enemies(scene)
 
+  const checkCollisions = (groupA, groupB, onCollide) => {
+    groupA.pool.getAliveObjects().forEach((itemA) => {
+      groupB.pool.getAliveObjects().forEach((itemB) => {
+        if (collides(itemA, itemB)) {
+          onCollide(itemA, itemB)
+        }
+      })
+    })
+  }
+
   return {
     shutdown() {},
     update(dt) {
@@ -24,6 +34,11 @@ export const GameScene = ({ canvas }) => {
       bullets.update()
       enemies.update()
       scene.lookAt(player.sprite)
+
+      checkCollisions(bullets, enemies, (bullet, enemy) => {
+        enemy.damage(1)
+        bullet.ttl = 0
+      })
     },
     render() {
       scene.render()

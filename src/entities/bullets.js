@@ -10,8 +10,8 @@ export const Bullets = (scene) => {
         x,
         y,
         anchor: { x: 0.5, y: 0.5 },
-        width: 20,
-        height: 20,
+        width: 10,
+        height: 10,
         color: 'purple',
       })
       bullet.x = x
@@ -30,8 +30,8 @@ export const Bullets = (scene) => {
 
       const pointer = getPointer()
       const angle = Math.atan2(400 - pointer.x, 400 - pointer.y)
-      bullet.dy = scene.player.sprite.dy + -4 * Math.cos(angle)
-      bullet.dx = scene.player.sprite.dx + -4 * Math.sin(angle)
+      bullet.dy = scene.player.sprite.dy + -8 * Math.cos(angle)
+      bullet.dx = scene.player.sprite.dx + -8 * Math.sin(angle)
       bullet.ttl = 200
     },
     destroy() {
