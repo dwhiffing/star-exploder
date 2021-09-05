@@ -4,11 +4,21 @@ import { Sprite } from './sprite'
 export class Pool extends BasePool.class {
   constructor(
     scene,
-    { create = (...args) => new Sprite(...args), maxSize = 100, ...opts } = {},
+    {
+      create = (...args) => new Sprite(...args),
+      maxSize = 100,
+      autoInit,
+      ...opts
+    } = {},
   ) {
     super({ create, maxSize })
     this.scene = scene
     this.opts = opts
+    if (autoInit) {
+      for (let i = 0; i < maxSize; i += 1) {
+        this.get({ x: 0, y: 0, anchor: { x: 0.5, y: 0.5 } })
+      }
+    }
   }
 
   get(...args) {
