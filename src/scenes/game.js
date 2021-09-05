@@ -9,13 +9,9 @@ import {
 } from '../entities'
 
 export const GameScene = ({ canvas }) => {
-  let stars = Stars()
-
-  let scene = Scene({
-    id: 'game',
-    children: [...stars.pool.objects],
-  })
-
+  let scene = Scene({ id: 'game' })
+  let stars = Stars(scene)
+  stars.objects.forEach((star) => scene.addChild(star))
   let player = Player({ scene, x: canvas.width / 2, y: canvas.height / 2 })
   scene.addChild(player.sprite)
 
@@ -40,7 +36,7 @@ export const GameScene = ({ canvas }) => {
     update() {
       player.update()
       scene.update()
-      stars.update(scene.camera.x, scene.camera.y, canvas.width)
+      stars.update(scene.camera.x, scene.camera.y)
       enemies.update()
       pickups.update()
       inventory.update()
