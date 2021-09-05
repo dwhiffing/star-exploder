@@ -21,7 +21,7 @@ export const Bullets = (scene, opts = {}) => {
         height: size,
         dx: dx + -speed * Math.sin(angle),
         dy: dy + -speed * Math.cos(angle),
-        ttl: 90,
+        ttl: 150,
       })
 
       if (!bullet) return

@@ -74,6 +74,11 @@ class Enemy extends Sprite {
     this.bullets = properties.bullets
   }
 
+  die() {
+    super.die()
+    this.scene.pickups.spawn(this)
+  }
+
   update() {
     super.update()
     if (!this.isAlive()) return

@@ -9,8 +9,12 @@ export class Sprite extends BaseSprite.class {
     if (this.health <= 0) return
     this.health -= n
     if (this.health <= 0) {
-      this.ttl = 0
+      this.die()
     }
+  }
+
+  die() {
+    this.ttl = 0
   }
 
   update() {

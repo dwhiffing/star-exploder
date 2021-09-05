@@ -7,6 +7,7 @@ export const Player = ({ scene, x, y }) => {
   let bulletTimer = 0
   const bullets = Bullets(scene)
   const { width, height } = scene.context.canvas
+  const gold = 0
 
   let sprite = new Sprite({
     x,
@@ -17,6 +18,9 @@ export const Player = ({ scene, x, y }) => {
     width: 40,
     height: 40,
   })
+
+  const pickup = () => (gold += 1)
+  sprite.pickup = pickup
 
   return {
     sprite,

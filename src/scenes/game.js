@@ -1,6 +1,5 @@
 import { collides, Scene } from 'kontra'
-import { Player, Stars } from '../entities'
-import { Enemies } from '../entities/enemies'
+import { Enemies, Pickups, Player, Stars } from '../entities'
 
 export const GameScene = ({ canvas }) => {
   let stars = Stars()
@@ -12,8 +11,12 @@ export const GameScene = ({ canvas }) => {
 
   let player = Player({ scene, x: canvas.width / 2, y: canvas.height / 2 })
   scene.addChild(player.sprite)
-  scene.player = player
+
   let enemies = Enemies(scene)
+  let pickups = Pickups(scene)
+
+  scene.player = player
+  scene.pickups = pickups
 
   const checkCollisions = (groupA, groupB, onCollide) => {
     groupA.forEach((itemA) =>
@@ -30,13 +33,13 @@ export const GameScene = ({ canvas }) => {
       scene.update()
       stars.update(scene.camera.x, scene.camera.y, canvas.width)
       enemies.update()
+      pickups.update()
       scene.lookAt(player.sprite)
 
       checkCollisions(
         player.bullets.pool.getAliveObjects(),
         enemies.pool.getAliveObjects(),
         (bullet, enemy) => {
-          if (!bullet.isAlive() || !enemy.isAlive()) return
           enemy.damage(1)
           bullet.ttl = 0
         },
@@ -46,9 +49,17 @@ export const GameScene = ({ canvas }) => {
         enemies.bullets.pool.getAliveObjects(),
         [player.sprite],
         (bullet, player) => {
-          if (!bullet.isAlive() || !player.isAlive()) return
           player.damage(1)
           bullet.ttl = 0
+        },
+      )
+
+      checkCollisions(
+        pickups.pool.getAliveObjects(),
+        [player.sprite],
+        (pickup, player) => {
+          player.pickup(pickup)
+          pickup.ttl = 0
         },
       )
     },

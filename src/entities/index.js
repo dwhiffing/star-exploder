@@ -1,3 +1,5 @@
 export { Player } from './player'
 export { Stars } from './stars'
 export { Bullets } from './bullets'
+export { Pickups } from './pickups'
+export { Enemies } from './enemies'
