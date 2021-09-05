@@ -57,6 +57,7 @@ export const Enemies = (scene) => {
         spawnTimer = SPAWN_TIME
       }
       pool.update()
+      bullets.update()
     },
     render() {
       pool.render()
