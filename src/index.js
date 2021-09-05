@@ -1,5 +1,5 @@
-import { init, initPointer, initKeys, GameLoop, Pool } from 'kontra'
-import { GameScene } from './scenes'
+import { init, initPointer, initKeys, GameLoop } from 'kontra'
+import { GameScene, MenuScene } from './scenes'
 // import '../lib/zzfx'
 // import '../lib/zzfxm'
 // if (!window.muted && !musicPlaying) {
@@ -7,7 +7,6 @@ import { GameScene } from './scenes'
 //   let music = zzfxP(...zzfxM(...MUSIC[0]))
 //   music.loop = true
 // }
-// screen = createWin(() => (screen = createMenu(startLevel)))
 
 const { canvas } = init()
 
@@ -17,12 +16,17 @@ initKeys()
 let scene
 
 const startGame = () => {
-  // scene && scene.shutdown()
+  scene && scene.shutdown()
   scene = GameScene({ canvas })
 }
 
+const startMenu = () => {
+  scene && scene.shutdown()
+  scene = MenuScene({ canvas, onDown: startGame })
+}
+
+// startMenu()
 startGame()
-// scene = createMenu(startGame)
 
 GameLoop({
   update: (...rest) => scene && scene.update(...rest),
