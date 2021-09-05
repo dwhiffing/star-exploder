@@ -34,7 +34,7 @@ export const planetStats = (_x, _y, chunkSize) => {
   const seedBase = `thisistheplanetseedokay-${_x},${_y}`
   const x = _x * chunkSize + chunkSize / 2
   const y = _y * chunkSize + chunkSize / 2
-  const color = 'white'
+  const color = COLORS[hashCode(`${seedBase}color`) % 4]
   const size = 200 + 10 * (hashCode(`${seedBase}size`) % 5)
   const isPlanet = hashCode(`${seedBase}planet`) % 223 === 0
 
@@ -42,3 +42,5 @@ export const planetStats = (_x, _y, chunkSize) => {
 }
 
 export const PLANET_CHUNK_FACTOR = 1
+
+const COLORS = ['white', 'yellow', 'blue', 'red']

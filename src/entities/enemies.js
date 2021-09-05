@@ -2,10 +2,10 @@ import { Pool } from 'kontra'
 import { Bullets } from './bullets'
 import { Sprite } from './sprite'
 
-const SPAWN_TIME = 300
+const SPAWN_TIME = -1
 
 export const Enemies = (scene) => {
-  let spawnTimer = 0
+  let spawnTimer = SPAWN_TIME
   const bullets = Bullets(scene)
   let pool = Pool({
     create: (...args) => new Enemy({ ...args, bullets, scene }),
@@ -52,7 +52,7 @@ export const Enemies = (scene) => {
     },
     update() {
       if (spawnTimer > 0) spawnTimer--
-      else {
+      else if (spawnTimer === 0) {
         this.spawn()
         spawnTimer = SPAWN_TIME
       }

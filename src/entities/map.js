@@ -7,9 +7,15 @@ export const GameMap = (scene) => {
   const BUFFER = 40
   const BUFFER2 = 50
   let allowTrigger = true
+  let lastChunkX = 0
+  let lastChunkY = 0
+  let lastOffsetX = null
+  let lastOffsetY = null
+  let offsetX = 0
+  let offsetY = 0
   let planets = []
   const chunkSize = 8
-  const rowCount = (width - BUFFER2 * 2) / chunkSize
+  const rowCount = Math.floor((width - BUFFER2 * 2) / chunkSize)
 
   let back = Sprite({
     x: BUFFER,
@@ -27,22 +33,16 @@ export const GameMap = (scene) => {
     color: '#000',
   })
 
-  for (let x = 0; x < rowCount; x++) {
-    for (let y = 0; y < rowCount; y++) {
-      const stats = planetStats(x, y, chunkSize)
-      if (stats.isPlanet) {
-        let planet = Sprite({
-          x: BUFFER2 + x * chunkSize + chunkSize / 2,
-          y: BUFFER2 + y * chunkSize + chunkSize / 2,
-          anchor: { x: 0.5, y: 0.5 },
-          width: chunkSize / 2,
-          height: chunkSize / 2,
-          color: 'white',
-        })
+  for (let x = 0; x < 100; x++) {
+    let planet = Sprite({
+      x: 0,
+      y: 0,
+      anchor: { x: 0.5, y: 0.5 },
+      width: chunkSize / 2,
+      height: chunkSize / 2,
+    })
 
-        planets.push(planet)
-      }
-    }
+    planets.push(planet)
   }
 
   let player = Sprite({
@@ -76,8 +76,36 @@ export const GameMap = (scene) => {
         scene.player.sprite.y /
           (scene.context.canvas.width * PLANET_CHUNK_FACTOR),
       )
-      player.x = BUFFER2 + chunkX * chunkSize + chunkSize / 2
-      player.y = BUFFER2 + chunkY * chunkSize + chunkSize / 2
+      if (chunkX === lastChunkX && chunkY === lastChunkY) return
+      lastChunkX = chunkX
+      lastChunkY = chunkY
+
+      player.x = BUFFER2 + mod(chunkX, rowCount) * chunkSize + chunkSize / 2
+      player.y = BUFFER2 + mod(chunkY, rowCount) * chunkSize + chunkSize / 2
+
+      offsetX = Math.floor(chunkX / rowCount)
+      offsetY = Math.floor(chunkY / rowCount)
+      if (offsetX === lastOffsetX && offsetY === lastOffsetY) return
+      lastOffsetX = offsetX
+      lastOffsetY = offsetY
+      planets.forEach((p) => {
+        p.color = 'black'
+      })
+      let i = 0
+      for (let x = 0; x < rowCount; x++) {
+        for (let y = 0; y < rowCount; y++) {
+          const _x = x + offsetX * rowCount
+          const _y = y + offsetY * rowCount
+          const stats = planetStats(_x, _y, chunkSize)
+          if (stats.isPlanet) {
+            let planet = planets[i]
+            i++
+            planet.x = BUFFER2 + x * chunkSize + chunkSize / 2
+            planet.y = BUFFER2 + y * chunkSize + chunkSize / 2
+            planet.color = stats.color
+          }
+        }
+      }
     },
     render() {
       if (!active) return
@@ -88,3 +116,4 @@ export const GameMap = (scene) => {
     },
   }
 }
+const mod = (x, m) => ((x % m) + m) % m
