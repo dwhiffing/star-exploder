@@ -1,49 +1,20 @@
-import { Pool, Sprite as BaseSprite } from 'kontra'
+import { Pool } from 'kontra'
+import { Bullets } from './bullets'
+import { Sprite } from './sprite'
 
-class Sprite extends BaseSprite.class {
-  constructor(properties) {
-    super(properties)
-  }
-
-  damage(n) {
-    this.health -= n
-    if (this.health <= 0) {
-      this.ttl = 0
-    }
-  }
-
-  update() {
-    super.update()
-    this.opacity = this.isAlive() ? 1 : 0
-  }
-}
-
-class Enemy extends Sprite {
-  constructor(properties) {
-    super(properties)
-  }
-
-  update() {
-    super.update()
-
-    if (this.target) {
-      const x = this.x - this.target.x
-      const y = this.y - this.target.y
-      const angle = Math.atan2(x, y)
-      const dist = Math.sqrt(x * x + y * y)
-      const speed = dist < 100 ? 0 : 2
-      this.dy = -speed * Math.cos(angle)
-      this.dx = -speed * Math.sin(angle)
-    }
-  }
-}
-const createEnemy = (...args) => new Enemy(args)
+const SPAWN_TIME = 400
 
 export const Enemies = (scene) => {
-  let pool = Pool({ create: createEnemy, maxSize: ENEMY_COUNT })
   let spawnTimer = 0
+  const bullets = Bullets(scene)
+  let pool = Pool({
+    create: (...args) => new Enemy({ ...args, bullets, scene }),
+    maxSize: ENEMY_COUNT,
+  })
+  const { width, height } = scene.context.canvas
   return {
     pool,
+    bullets,
     get(x, y) {
       const enemy = pool.get({
         x,
@@ -67,8 +38,8 @@ export const Enemies = (scene) => {
     update() {
       if (spawnTimer > 0) spawnTimer--
       if (spawnTimer === 0) {
-        this.get(0, 0)
-        spawnTimer = 200
+        this.get((Math.random() * width) / 2, (Math.random() * height) / 2)
+        spawnTimer = SPAWN_TIME
       }
       pool.update()
     },
@@ -79,3 +50,32 @@ export const Enemies = (scene) => {
 }
 
 const ENEMY_COUNT = 50
+
+class Enemy extends Sprite {
+  constructor(properties) {
+    super(properties)
+    this.bulletTimer = 0
+    this.scene = properties.scene
+    this.bullets = properties.bullets
+  }
+
+  update() {
+    super.update()
+    if (!this.isAlive()) return
+    if (this.bulletTimer > 0) this.bulletTimer--
+    if (this.bulletTimer === 0) {
+      this.bulletTimer = 100
+      this.bullets.shoot(this, this.scene.player.sprite)
+    }
+
+    if (this.target) {
+      const x = this.x - this.target.x
+      const y = this.y - this.target.y
+      const angle = Math.atan2(x, y)
+      const dist = Math.sqrt(x * x + y * y)
+      const speed = dist < 100 ? 0 : 2
+      this.dy = -speed * Math.cos(angle)
+      this.dx = -speed * Math.sin(angle)
+    }
+  }
+}

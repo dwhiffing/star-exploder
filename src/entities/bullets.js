@@ -1,49 +1,42 @@
-import { Sprite, Pool, pointerPressed, getPointer } from 'kontra'
+import { Pool } from 'kontra'
+import { Sprite } from './sprite'
 
-export const Bullets = (scene) => {
-  let pool = Pool({ create: Sprite, maxSize: BULLET_COUNT })
-  let bulletTimer = 0
+export const Bullets = (scene, opts = {}) => {
+  let pool = Pool({
+    create: (...args) => new Sprite(...args),
+    maxSize: BULLET_COUNT,
+  })
+  const { size = 10, color = 'purple' } = opts
   return {
     pool,
-    get(x, y) {
+    get(start, target, speed = 8) {
+      const { x, y, dy, dx } = start
       const bullet = pool.get({
         x,
         y,
+        color,
         anchor: { x: 0.5, y: 0.5 },
-        width: 10,
-        height: 10,
-        color: 'purple',
+        width: size,
+        height: size,
       })
-      bullet.x = x
-      bullet.y = y
-      // if (!scene.children)
+
       if (!scene.children.includes(bullet)) {
         scene.addChild(bullet)
-        let oldUpdate = bullet.update.bind(bullet)
-        bullet.update = () => {
-          oldUpdate()
-          if (bullet.ttl <= 0) {
-            bullet.opacity = 0
-          }
-        }
       }
 
-      const pointer = getPointer()
-      const angle = Math.atan2(400 - pointer.x, 400 - pointer.y)
-      bullet.dy = scene.player.sprite.dy + -8 * Math.cos(angle)
-      bullet.dx = scene.player.sprite.dx + -8 * Math.sin(angle)
+      const angle = Math.atan2(x - target.x, y - target.y)
+      bullet.dy = dy + -speed * Math.cos(angle)
+      bullet.dx = dx + -speed * Math.sin(angle)
       bullet.ttl = 200
     },
     destroy() {
       pool.clear()
     },
     update() {
-      if (bulletTimer > 0) bulletTimer--
-      if (pointerPressed('left') && bulletTimer === 0) {
-        this.get(scene.player.sprite.x, scene.player.sprite.y)
-        bulletTimer = 10
-      }
       pool.update()
+    },
+    shoot(start, target) {
+      this.get(start, target)
     },
     render() {
       pool.render()

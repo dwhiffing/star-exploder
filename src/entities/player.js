@@ -1,19 +1,26 @@
-import { Sprite, keyPressed } from 'kontra'
+import { getPointer, keyPressed, pointerPressed } from 'kontra'
+import { Sprite } from './sprite'
+import { Bullets } from './bullets'
 
-export const Player = ({ x, y }) => {
-  let sprite = Sprite({
+export const Player = ({ scene, x, y }) => {
+  const speed = 0.05
+  let bulletTimer = 0
+  const bullets = Bullets(scene)
+  const { width, height } = scene.context.canvas
+
+  let sprite = new Sprite({
     x,
     y,
+    health: 10,
     anchor: { x: 0.5, y: 0.5 },
     color: 'blue',
     width: 40,
     height: 40,
   })
 
-  const speed = 0.05
-
   return {
     sprite,
+    bullets,
     shutdown() {},
     update() {
       sprite.ddx = 0
@@ -31,6 +38,22 @@ export const Player = ({ x, y }) => {
         sprite.ddx = speed
       }
       sprite.update()
+
+      if (sprite.health <= 0) {
+        setTimeout(() => {
+          sprite.health = 10
+          sprite.ttl = Infinity
+        }, 1000)
+      }
+
+      if (bulletTimer > 0) bulletTimer--
+      if (pointerPressed('left') && bulletTimer === 0) {
+        bulletTimer = 10
+        const pointer = getPointer()
+        const x = sprite.x - width / 2 + pointer.x
+        const y = sprite.y - height / 2 + pointer.y
+        bullets.shoot(sprite, { x, y })
+      }
     },
     render() {
       sprite.render()
