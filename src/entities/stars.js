@@ -1,11 +1,11 @@
-import { hashCode } from '../utils'
+import { COORDS, hashCode } from '../utils'
 import { Pool } from './pool'
 
 export const Stars = (scene) => {
   let lastCoords = {}
   const pool = new Pool(scene, {
-    autoInit: true,
     maxSize: 9 * 50,
+    autoInit: true,
     update(x, y) {
       const chunkSize = scene.context.canvas.width
       const chunkX = Math.floor(x / chunkSize)
@@ -13,6 +13,7 @@ export const Stars = (scene) => {
 
       if (lastCoords.x === chunkX && lastCoords.y === chunkY) return
       lastCoords = { x: chunkX, y: chunkY }
+
       pool.objects.forEach((star, index) => {
         let chunkIndex = Math.floor(index / (pool.maxSize / 9))
         const _x = COORDS[chunkIndex][0] + chunkX
@@ -46,15 +47,4 @@ const COLORS = [
   'yellow',
   'blue',
   'red',
-]
-const COORDS = [
-  [-1, -1],
-  [0, -1],
-  [1, -1],
-  [-1, 0],
-  [0, 0],
-  [1, 0],
-  [-1, 1],
-  [0, 1],
-  [1, 1],
 ]

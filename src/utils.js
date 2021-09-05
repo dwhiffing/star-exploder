@@ -14,3 +14,15 @@ export const hashCode = function (str) {
   }
   return Math.abs(hash)
 }
+
+export const COORDS = [
+  [-1, -1],
+  [0, -1],
+  [1, -1],
+  [-1, 0],
+  [0, 0],
+  [1, 0],
+  [-1, 1],
+  [0, 1],
+  [1, 1],
+]

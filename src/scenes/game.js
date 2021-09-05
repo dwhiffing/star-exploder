@@ -4,6 +4,7 @@ import {
   Enemies,
   Pickups,
   Player,
+  Planets,
   Stars,
   GameMap,
 } from '../entities'
@@ -11,17 +12,24 @@ import {
 export const GameScene = ({ canvas }) => {
   let scene = Scene({ id: 'game' })
   let stars = Stars(scene)
+  let map = GameMap(scene)
+  let planets = Planets(scene)
   stars.objects.forEach((star) => scene.addChild(star))
-  let player = Player({ scene, x: canvas.width / 2, y: canvas.height / 2 })
+  planets.objects.forEach((planet) => scene.addChild(planet))
+  let player = Player({
+    scene,
+    x: canvas.width * (map.rowCount / 2),
+    y: canvas.height * (map.rowCount / 2),
+  })
   scene.addChild(player.sprite)
 
   let enemies = Enemies(scene)
   let pickups = Pickups(scene)
   let inventory = Inventory(scene)
-  let map = GameMap(scene)
 
   scene.player = player
   scene.pickups = pickups
+  scene.map = map
 
   const checkCollisions = (groupA, groupB, onCollide) => {
     groupA.forEach((itemA) =>
@@ -37,6 +45,7 @@ export const GameScene = ({ canvas }) => {
       player.update()
       scene.update()
       stars.update(scene.camera.x, scene.camera.y)
+      planets.update(scene.camera.x, scene.camera.y)
       enemies.update()
       pickups.update()
       inventory.update()
