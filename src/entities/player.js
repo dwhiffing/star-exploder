@@ -38,6 +38,7 @@ export const Player = ({ scene, x, y }) => {
         sprite.ddx = speed
       }
       sprite.update()
+      bullets.update()
 
       if (sprite.health <= 0) {
         setTimeout(() => {

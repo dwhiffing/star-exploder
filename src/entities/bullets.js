@@ -11,6 +11,7 @@ export const Bullets = (scene, opts = {}) => {
     pool,
     get(start, target, speed = 8) {
       const { x, y, dy, dx } = start
+      const angle = Math.atan2(x - target.x, y - target.y)
       const bullet = pool.get({
         x,
         y,
@@ -18,16 +19,15 @@ export const Bullets = (scene, opts = {}) => {
         anchor: { x: 0.5, y: 0.5 },
         width: size,
         height: size,
+        dx: dx + -speed * Math.sin(angle),
+        dy: dy + -speed * Math.cos(angle),
+        ttl: 90,
       })
 
+      if (!bullet) return
       if (!scene.children.includes(bullet)) {
         scene.addChild(bullet)
       }
-
-      const angle = Math.atan2(x - target.x, y - target.y)
-      bullet.dy = dy + -speed * Math.cos(angle)
-      bullet.dx = dx + -speed * Math.sin(angle)
-      bullet.ttl = 200
     },
     destroy() {
       pool.clear()
@@ -44,4 +44,4 @@ export const Bullets = (scene, opts = {}) => {
   }
 }
 
-const BULLET_COUNT = 200
+const BULLET_COUNT = 20
