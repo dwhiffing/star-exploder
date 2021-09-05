@@ -59,7 +59,7 @@ export const Player = ({ scene, x, y }) => {
         const pointer = getPointer()
         const x = sprite.x - width / 2 + pointer.x
         const y = sprite.y - height / 2 + pointer.y
-        bullets.shoot(sprite, { x, y })
+        bullets.get(sprite, { x, y })
       }
     },
     render() {

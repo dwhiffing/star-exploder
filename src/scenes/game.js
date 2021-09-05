@@ -48,7 +48,7 @@ export const GameScene = ({ canvas }) => {
       scene.lookAt(player.sprite)
 
       checkCollisions(
-        player.bullets.pool.getAliveObjects(),
+        player.bullets.getAliveObjects(),
         enemies.pool.getAliveObjects(),
         (bullet, enemy) => {
           enemy.damage(1)
@@ -57,7 +57,7 @@ export const GameScene = ({ canvas }) => {
       )
 
       checkCollisions(
-        enemies.bullets.pool.getAliveObjects(),
+        enemies.bullets.getAliveObjects(),
         [player.sprite],
         (bullet, player) => {
           player.damage(1)
@@ -66,7 +66,7 @@ export const GameScene = ({ canvas }) => {
       )
 
       checkCollisions(
-        pickups.pool.getAliveObjects(),
+        pickups.getAliveObjects(),
         [player.sprite],
         (pickup, player) => {
           player.pickup(pickup)

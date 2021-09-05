@@ -76,7 +76,7 @@ class Enemy extends Sprite {
 
   die() {
     super.die()
-    this.scene.pickups.spawn(this)
+    this.scene.pickups.get(this)
   }
 
   update() {
@@ -85,7 +85,7 @@ class Enemy extends Sprite {
     if (this.bulletTimer > 0) this.bulletTimer--
     if (this.bulletTimer === 0) {
       this.bulletTimer = 100
-      this.bullets.shoot(this, this.scene.player.sprite)
+      this.bullets.get(this, this.scene.player.sprite)
     }
 
     if (this.target) {
