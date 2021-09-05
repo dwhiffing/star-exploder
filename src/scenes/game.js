@@ -1,5 +1,12 @@
 import { collides, Scene } from 'kontra'
-import { Inventory, Enemies, Pickups, Player, Stars } from '../entities'
+import {
+  Inventory,
+  Enemies,
+  Pickups,
+  Player,
+  Stars,
+  GameMap,
+} from '../entities'
 
 export const GameScene = ({ canvas }) => {
   let stars = Stars()
@@ -15,6 +22,7 @@ export const GameScene = ({ canvas }) => {
   let enemies = Enemies(scene)
   let pickups = Pickups(scene)
   let inventory = Inventory(scene)
+  let map = GameMap(scene)
 
   scene.player = player
   scene.pickups = pickups
@@ -36,6 +44,7 @@ export const GameScene = ({ canvas }) => {
       enemies.update()
       pickups.update()
       inventory.update()
+      map.update()
       scene.lookAt(player.sprite)
 
       checkCollisions(
@@ -68,6 +77,7 @@ export const GameScene = ({ canvas }) => {
     render() {
       scene.render()
       inventory.render()
+      map.render()
     },
   }
 }

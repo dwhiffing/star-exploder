@@ -1,4 +1,5 @@
 import { Sprite, Pool } from 'kontra'
+import { hashCode } from '../utils'
 
 export const Stars = () => {
   let pool = Pool({ create: Sprite, maxSize: STAR_COUNT })
@@ -25,19 +26,14 @@ export const Stars = () => {
         const _x = COORDS[chunkIndex][0] + chunkX
         const _y = COORDS[chunkIndex][1] + chunkY
 
-        const seedBase = `seed-${_x},${_y},${index % (STAR_COUNT / 9)}`
-        const x = (hashCode(`${seedBase}x`) % 100) / 100
-        const y = (hashCode(`${seedBase}thatsthey`) % 100) / 100
-        const alpha = (hashCode(`${seedBase}alpha`) % 100) / 100
-        const color = hashCode(`${seedBase}color`) % 10
-        const size = hashCode(`${seedBase}size`) % 5
+        const stats = starStats(_x, _y, index)
 
-        star.x = _x * chunkSize + (x * chunkSize - chunkSize / 2)
-        star.y = _y * chunkSize + (y * chunkSize - chunkSize / 2)
-        star.opacity = alpha
-        star.color = COLORS[color]
-        star.width = size
-        star.height = size
+        star.x = _x * chunkSize + (stats.x * chunkSize - chunkSize / 2)
+        star.y = _y * chunkSize + (stats.y * chunkSize - chunkSize / 2)
+        star.opacity = stats.alpha
+        star.color = stats.color
+        star.width = stats.size
+        star.height = stats.size
       })
     },
     render() {
@@ -46,7 +42,7 @@ export const Stars = () => {
   }
 }
 
-const STAR_COUNT = 9 * 50
+export const STAR_COUNT = 9 * 50
 const COLORS = [
   'white',
   'white',
@@ -59,7 +55,7 @@ const COLORS = [
   'blue',
   'red',
 ]
-const COORDS = [
+export const COORDS = [
   [-1, -1],
   [0, -1],
   [1, -1],
@@ -71,15 +67,12 @@ const COORDS = [
   [1, 1],
 ]
 
-const hashCode = function (str) {
-  var hash = 0
-  if (str.length === 0) {
-    return hash
-  }
-  for (var i = 0; i < str.length; i++) {
-    var char = str.charCodeAt(i)
-    hash = (hash << 5) - hash + char
-    hash = hash & hash
-  }
-  return Math.abs(hash)
+export const starStats = (_x, _y, index) => {
+  const seedBase = `seed-${_x},${_y},${index % (STAR_COUNT / 9)}`
+  const x = (hashCode(`${seedBase}x`) % 100) / 100
+  const y = (hashCode(`${seedBase}thatsthey`) % 100) / 100
+  const alpha = (hashCode(`${seedBase}alpha`) % 100) / 100
+  const color = COLORS[hashCode(`${seedBase}color`) % 10]
+  const size = hashCode(`${seedBase}size`) % 5
+  return { x, y, alpha, color, size }
 }
