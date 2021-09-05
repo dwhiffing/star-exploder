@@ -11,7 +11,19 @@ export default {
     format: 'esm',
   },
   plugins: [
-    kontra({}),
+    kontra({
+      gameObject: {
+        acceleration: true,
+        anchor: true,
+        camera: true,
+        group: true,
+        opacity: true,
+        rotation: true,
+        scale: true,
+        ttl: true,
+        velocity: true,
+      },
+    }),
     commonjs(),
     nodeResolve(),
     terser(),
