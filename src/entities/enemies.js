@@ -1,5 +1,5 @@
-import { Pool } from 'kontra'
-import { getAngle, getDist } from '../utils'
+import { angleToTarget, Pool } from 'kontra'
+import { getDist } from '../utils'
 import { Bullets } from './bullets'
 import { Sprite } from './sprite'
 
@@ -91,7 +91,7 @@ class Enemy extends Sprite {
     }
 
     if (this.target) {
-      const angle = getAngle(this, this.target)
+      const angle = angleToTarget(this, this.target) - 1.57
       const speed = getDist(this, this.target) < 100 ? 0 : 2
       this.dy = -speed * Math.cos(angle)
       this.dx = -speed * Math.sin(angle)

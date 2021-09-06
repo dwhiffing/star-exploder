@@ -1,11 +1,12 @@
+import { angleToTarget } from 'kontra'
 import { Pool } from './pool'
 
 export const Bullets = (scene, opts = {}) => {
-  const { size = 10, color = 'purple' } = opts
+  const { size = 5, color = 'yellow' } = opts
   return new Pool(scene, {
     get(start, target, speed = 8) {
       const { x, y, dy, dx } = start
-      const angle = Math.atan2(x - target.x, y - target.y)
+      const angle = angleToTarget(start, target) - 1.57
       return {
         x,
         y,
@@ -13,8 +14,8 @@ export const Bullets = (scene, opts = {}) => {
         anchor: { x: 0.5, y: 0.5 },
         width: size,
         height: size,
-        dx: dx + -speed * Math.sin(angle),
-        dy: dy + -speed * Math.cos(angle),
+        dx: dx + speed * Math.cos(angle),
+        dy: dy + speed * Math.sin(angle),
         ttl: 150,
       }
     },
