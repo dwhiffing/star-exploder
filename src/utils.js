@@ -26,3 +26,15 @@ export const COORDS = [
   [0, 1],
   [1, 1],
 ]
+
+export const getDist = (source, target) => {
+  const x = source.x - target.x
+  const y = source.y - target.y
+  return Math.sqrt(x * x + y * y)
+}
+
+export const getAngle = (source, target) => {
+  const x = source.x - target.x
+  const y = source.y - target.y
+  return Math.atan2(x, y)
+}
