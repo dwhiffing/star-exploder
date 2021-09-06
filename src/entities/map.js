@@ -1,4 +1,5 @@
-import { keyPressed, Sprite } from 'kontra'
+import { angleToTarget, keyPressed, Sprite } from 'kontra'
+import { getDist } from '../utils'
 import { planetStats, PLANET_CHUNK_FACTOR } from './planets'
 
 export const GameMap = (scene) => {
@@ -11,11 +12,34 @@ export const GameMap = (scene) => {
   let lastChunkY = 0
   let lastOffsetX = null
   let lastOffsetY = null
-  let offsetX = 0
-  let offsetY = 0
   let planets = []
   const chunkSize = 8
   const rowCount = Math.floor((width - BUFFER2 * 2) / chunkSize)
+  const updatePlanets = () => {
+    const offsetX = Math.floor(lastChunkX / rowCount)
+    const offsetY = Math.floor(lastChunkY / rowCount)
+    if (offsetX === lastOffsetX && offsetY === lastOffsetY) return
+    lastOffsetX = offsetX
+    lastOffsetY = offsetY
+    let i = 0
+    planets.forEach((p) => (p.color = 'black'))
+    for (let x = 0; x < rowCount; x++) {
+      for (let y = 0; y < rowCount; y++) {
+        const _x = x + offsetX * rowCount
+        const _y = y + offsetY * rowCount
+        const stats = planetStats(_x, _y, chunkSize)
+        if (stats.isPlanet) {
+          let planet = planets[i]
+          i++
+          planet._x = _x
+          planet._y = _y
+          planet.x = BUFFER2 + x * chunkSize + chunkSize / 2
+          planet.y = BUFFER2 + y * chunkSize + chunkSize / 2
+          planet.color = stats.color
+        }
+      }
+    }
+  }
 
   let back = Sprite({
     x: BUFFER,
@@ -37,6 +61,7 @@ export const GameMap = (scene) => {
     let planet = Sprite({
       x: 0,
       y: 0,
+      color: 'black',
       anchor: { x: 0.5, y: 0.5 },
       width: chunkSize / 2,
       height: chunkSize / 2,
@@ -44,6 +69,7 @@ export const GameMap = (scene) => {
 
     planets.push(planet)
   }
+  updatePlanets()
 
   let player = Sprite({
     x: 0,
@@ -56,6 +82,19 @@ export const GameMap = (scene) => {
 
   return {
     rowCount,
+    getClosest(sprite) {
+      return planets
+        .filter((p) => p.color !== 'black')
+        .map((p) => {
+          const f = width * PLANET_CHUNK_FACTOR
+          const thing = { x: p._x * f + 400, y: p._y * f + 400 }
+          const dist = getDist(thing, sprite)
+          const angle = angleToTarget(thing, sprite) - 1.57
+          return { ...p, dist, angle }
+        })
+        .sort((a, b) => a.dist - b.dist)
+        .slice(0, 4)
+    },
     shutdown() {},
     update() {
       if (keyPressed('m')) {
@@ -68,44 +107,15 @@ export const GameMap = (scene) => {
 
       if (!active) return
 
-      const chunkX = Math.floor(
-        scene.player.sprite.x /
-          (scene.context.canvas.width * PLANET_CHUNK_FACTOR),
-      )
-      const chunkY = Math.floor(
-        scene.player.sprite.y /
-          (scene.context.canvas.width * PLANET_CHUNK_FACTOR),
-      )
-      if (chunkX === lastChunkX && chunkY === lastChunkY) return
-      lastChunkX = chunkX
-      lastChunkY = chunkY
+      const { x, y } = this.getPlayerCoords()
+      if (x === lastChunkX && y === lastChunkY) return
+      lastChunkX = x
+      lastChunkY = y
 
-      player.x = BUFFER2 + mod(chunkX, rowCount) * chunkSize + chunkSize / 2
-      player.y = BUFFER2 + mod(chunkY, rowCount) * chunkSize + chunkSize / 2
+      player.x = BUFFER2 + mod(x, rowCount) * chunkSize + chunkSize / 2
+      player.y = BUFFER2 + mod(y, rowCount) * chunkSize + chunkSize / 2
 
-      offsetX = Math.floor(chunkX / rowCount)
-      offsetY = Math.floor(chunkY / rowCount)
-      if (offsetX === lastOffsetX && offsetY === lastOffsetY) return
-      lastOffsetX = offsetX
-      lastOffsetY = offsetY
-      planets.forEach((p) => {
-        p.color = 'black'
-      })
-      let i = 0
-      for (let x = 0; x < rowCount; x++) {
-        for (let y = 0; y < rowCount; y++) {
-          const _x = x + offsetX * rowCount
-          const _y = y + offsetY * rowCount
-          const stats = planetStats(_x, _y, chunkSize)
-          if (stats.isPlanet) {
-            let planet = planets[i]
-            i++
-            planet.x = BUFFER2 + x * chunkSize + chunkSize / 2
-            planet.y = BUFFER2 + y * chunkSize + chunkSize / 2
-            planet.color = stats.color
-          }
-        }
-      }
+      updatePlanets()
     },
     render() {
       if (!active) return
@@ -113,6 +123,15 @@ export const GameMap = (scene) => {
       board.render()
       player.render()
       planets.forEach((planet) => planet.render())
+    },
+    updatePlanets,
+    getPlayerCoords() {
+      const { x, y } = scene.player.sprite
+      const { width, height } = scene.context.canvas
+      return {
+        x: Math.floor(x / (width * PLANET_CHUNK_FACTOR)),
+        y: Math.floor(y / (height * PLANET_CHUNK_FACTOR)),
+      }
     },
   }
 }
