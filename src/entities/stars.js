@@ -25,7 +25,7 @@ export const Stars = (scene) => {
         star.x = _x * chunkSize + (x * chunkSize - chunkSize / 2)
         star.y = _y * chunkSize + (y * chunkSize - chunkSize / 2)
         star.opacity = (hashCode(`${seedBase}alpha`) % 100) / 100
-        star.color = COLORS[hashCode(`${seedBase}color`) % 10]
+        star.color = COLORS[hashCode(`${seedBase}color`) % COLORS.length]
         const size = hashCode(`${seedBase}size`) % 5
         star.width = size
         star.height = size
@@ -38,13 +38,12 @@ export const Stars = (scene) => {
 
 const COLORS = [
   'white',
-  'white',
-  'white',
-  'white',
-  'white',
-  'white',
-  'white',
-  'yellow',
+  'grey',
+  'grey',
+  'grey',
+  'grey',
+  'grey',
+  'purple',
   'blue',
   'red',
 ]
