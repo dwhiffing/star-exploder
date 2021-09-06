@@ -52,9 +52,11 @@ export const Player = ({ scene, x, y }) => {
   sprite.pickup = pickup
 
   const getItem = (item) => {
+    if (sprite.inventory.length >= 10) return
     sprite.inventory.push(item)
     const current = getStoreItem('player') || {}
     setStoreItem('player', { ...current, inventory: sprite.inventory })
+    return true
   }
   sprite.getItem = getItem
 

@@ -76,6 +76,8 @@ export const Station = (scene) => {
         { name: 'item' + Math.floor(Math.random() * 100) },
         { name: 'item' + Math.floor(Math.random() * 100) },
         { name: 'item' + Math.floor(Math.random() * 100) },
+        { name: 'item' + Math.floor(Math.random() * 100) },
+        { name: 'item' + Math.floor(Math.random() * 100) },
       ]
     },
     update() {

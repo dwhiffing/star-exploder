@@ -56,7 +56,8 @@ export const GameScene = ({ canvas }) => {
         $player.removeItem({ name: object?.text })
         $player.setGold($player.gold + 1)
       } else if (object.type === 'store') {
-        $player.getItem({ name: object?.text })
+        const canFit = $player.getItem({ name: object?.text })
+        if (!canFit || $player.gold < 1) return
         station.inventory = station.inventory.filter(
           (item) => item?.name !== object?.text,
         )
