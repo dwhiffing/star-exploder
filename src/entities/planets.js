@@ -78,7 +78,7 @@ export class Planet extends Sprite {
   }
   land() {
     if (!this.parent.station.active && this.color === 'blue') {
-      this.parent.station.open()
+      this.parent.station.open(this)
       setStoreItem('last-planet', { x: this.x, y: this.y })
     }
   }

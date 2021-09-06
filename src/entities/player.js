@@ -23,6 +23,7 @@ export const Player = ({ scene, x, y }) => {
     width: 30,
     height: 30,
     maxHealth: BASE_MAX,
+    inventory: getStoreItem('player')?.inventory || [],
     gold: getStoreItem('player')?.gold || 0,
     health: getStoreItem('player')?.health || BASE_MAX,
   })
@@ -34,23 +35,46 @@ export const Player = ({ scene, x, y }) => {
   }
   sprite.damage = damage
 
-  const pickup = (n = 1) => {
-    sprite.gold += n
+  const setGold = (n = 1) => {
+    sprite.gold = n
     const current = getStoreItem('player') || {}
     setStoreItem('player', { ...current, gold: sprite.gold })
   }
+  sprite.setGold = setGold
+
+  const pickup = (pickup) => {
+    if (pickup.type === 'gold') {
+      setGold(sprite.gold + 1)
+    } else {
+      getItem(pickup.item)
+    }
+  }
   sprite.pickup = pickup
+
+  const getItem = (item) => {
+    sprite.inventory.push(item)
+    const current = getStoreItem('player') || {}
+    setStoreItem('player', { ...current, inventory: sprite.inventory })
+  }
+  sprite.getItem = getItem
+
+  const removeItem = (item) => {
+    sprite.inventory = sprite.inventory.filter(
+      (_item) => _item?.name !== item?.name,
+    )
+    const current = getStoreItem('player') || {}
+    setStoreItem('player', { ...current, inventory: sprite.inventory })
+  }
+  sprite.removeItem = removeItem
 
   return {
     sprite,
     bullets,
     shutdown() {},
     repair() {
-      console.log('try')
       if (sprite.gold > 0) {
         pickup(-1)
         damage(-sprite.maxHealth + sprite.health)
-        console.log(-sprite.maxHealth + sprite.health)
       }
     },
     update() {

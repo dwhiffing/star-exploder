@@ -1,3 +1,5 @@
+import { collides } from 'kontra'
+
 window.muted = false
 window.playSound = (sound) => !window.muted && zzfx(...sound)
 window.toggleMute = () => (window.muted = !window.muted)
@@ -31,4 +33,12 @@ export const getDist = (source, target) => {
   const x = source.x - target.x
   const y = source.y - target.y
   return Math.sqrt(x * x + y * y)
+}
+
+export const checkCollisions = (groupA, groupB, onCollide) => {
+  groupA.forEach((itemA) =>
+    groupB.forEach((itemB) => {
+      if (collides(itemA, itemB)) onCollide(itemA, itemB)
+    }),
+  )
 }

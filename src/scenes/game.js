@@ -1,4 +1,4 @@
-import { collides, Scene } from 'kontra'
+import { onPointerDown, Scene } from 'kontra'
 import {
   Inventory,
   Station,
@@ -10,6 +10,8 @@ import {
   GameMap,
   Hud,
 } from '../entities'
+import { planetStats } from '../entities/planets'
+import { checkCollisions } from '../utils'
 
 export const GameScene = ({ canvas }) => {
   let scene = Scene({ id: 'game' })
@@ -33,18 +35,35 @@ export const GameScene = ({ canvas }) => {
 
   scene.player = player
   scene.pickups = pickups
+  scene.planets = planets
   scene.enemies = enemies
   scene.station = station
   scene.map = map
   scene.hud = hud
 
-  const checkCollisions = (groupA, groupB, onCollide) => {
-    groupA.forEach((itemA) =>
-      groupB.forEach((itemB) => {
-        if (collides(itemA, itemB)) onCollide(itemA, itemB)
-      }),
-    )
-  }
+  onPointerDown((e, object) => {
+    if (!object) return
+    const $player = player.sprite
+    if (map.active) {
+      const stats = planetStats(object._x, object._y)
+      if (stats.health > 0) return
+      $player.x = stats.x
+      $player.y = stats.y
+      $player.dx = 0
+      $player.dy = 0
+    } else if (inventory.active && station.active) {
+      if (object.type === 'player') {
+        $player.removeItem({ name: object?.text })
+        $player.setGold($player.gold + 1)
+      } else if (object.type === 'store') {
+        $player.getItem({ name: object?.text })
+        station.inventory = station.inventory.filter(
+          (item) => item?.name !== object?.text,
+        )
+        $player.setGold($player.gold - 1)
+      }
+    }
+  })
 
   return {
     shutdown() {},
@@ -95,7 +114,7 @@ export const GameScene = ({ canvas }) => {
         pickups.getAliveObjects(),
         [player.sprite],
         (pickup, player) => {
-          player.pickup(1)
+          player.pickup(pickup)
           pickup.ttl = 0
         },
       )

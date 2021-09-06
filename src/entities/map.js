@@ -1,4 +1,4 @@
-import { angleToTarget, keyPressed, onPointerDown, Sprite, track } from 'kontra'
+import { angleToTarget, keyPressed, Sprite, track } from 'kontra'
 import { getDist } from '../utils'
 import { planetStats, PLANET_CHUNK_FACTOR } from './planets'
 
@@ -81,17 +81,10 @@ export const GameMap = (scene) => {
     color: 'blue',
   })
 
-  onPointerDown(function (e, object) {
-    if (!active || !object || !scene.station.active) return
-    const stats = planetStats(object._x, object._y)
-    if (stats.health > 0) return
-    scene.player.sprite.x = stats.x
-    scene.player.sprite.y = stats.y
-    scene.player.sprite.dx = 0
-    scene.player.sprite.dy = 0
-  })
-
   return {
+    get active() {
+      return active
+    },
     rowCount,
     forceUpdate() {
       lastOffsetX = null
