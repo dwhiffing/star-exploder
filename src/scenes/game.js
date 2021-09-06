@@ -31,6 +31,7 @@ export const GameScene = ({ canvas }) => {
 
   scene.player = player
   scene.pickups = pickups
+  scene.enemies = enemies
   scene.map = map
   scene.hud = hud
 

@@ -3,7 +3,7 @@ import { Sprite } from './sprite'
 import { Bullets } from './bullets'
 
 export const Player = ({ scene, x, y }) => {
-  const speed = 0.1
+  const speed = 0.15
   let bulletTimer = 0
   const bullets = Bullets(scene)
   const { width, height } = scene.context.canvas
@@ -42,6 +42,10 @@ export const Player = ({ scene, x, y }) => {
       }
       if (keyPressed('right') || keyPressed('d')) {
         sprite.ddx = speed
+      }
+      if (keyPressed('space')) {
+        sprite.dx = 0
+        sprite.dy = 0
       }
       sprite.update()
       bullets.update()

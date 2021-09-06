@@ -1,10 +1,13 @@
 import { getStoreItem, setStoreItem } from 'kontra'
-import { COORDS, hashCode } from '../utils'
+import { COORDS, getDist, hashCode } from '../utils'
 import { Sprite } from './sprite'
 import { Pool } from './pool'
 
+const SPAWN_TIME = 500
+
 export const Planets = (scene, opts = {}) => {
   let lastCoords = {}
+  let spawnTimer = SPAWN_TIME
   const pool = new Pool(scene, {
     maxSize: 9,
     create: (...args) => new Planet(...args),
@@ -13,6 +16,17 @@ export const Planets = (scene, opts = {}) => {
       const chunkSize = scene.context.canvas.width * PLANET_CHUNK_FACTOR
       const chunkX = Math.floor(x / chunkSize)
       const chunkY = Math.floor(y / chunkSize)
+
+      if (spawnTimer > 0) spawnTimer--
+      else if (spawnTimer === 0) {
+        const sorted = pool.objects
+          .filter((p) => p.width > 0)
+          .map((p) => ({ p, dist: getDist(p, scene.player.sprite) }))
+          .sort((a, b) => a.dist - b.dist)
+        if (sorted[0] && sorted[0].p.color !== 'blue')
+          scene.enemies.spawn(sorted[0].p)
+        spawnTimer = SPAWN_TIME
+      }
 
       if (lastCoords.x === chunkX && lastCoords.y === chunkY) return
       lastCoords = { x: chunkX, y: chunkY }

@@ -3,36 +3,35 @@ import { getDist } from '../utils'
 import { Bullets } from './bullets'
 import { Sprite } from './sprite'
 
-const SPAWN_TIME = -1
-
 export const Enemies = (scene) => {
-  let spawnTimer = SPAWN_TIME
   const bullets = Bullets(scene)
   let pool = Pool({
     create: (...args) => new Enemy({ ...args, bullets, scene }),
     maxSize: ENEMY_COUNT,
   })
-  const { width, height } = scene.context.canvas
 
   return {
     pool,
     bullets,
-    spawn() {
-      let offsetX = width
-      let offsetY = 0
-      const dir = Math.floor(Math.random() * 4)
-      if (dir === 1) {
-        offsetX = -width
-        offsetY = 0
-      } else if (dir === 2) {
-        offsetX = 0
-        offsetY = -height
-      } else if (dir === 3) {
-        offsetX = 0
-        offsetY = height
-      }
-      const x = offsetX + scene.player.sprite.x + (Math.random() * width) / 2
-      const y = offsetY + scene.player.sprite.y + (Math.random() * height) / 2
+    spawn({ x, y }) {
+      console.log('spawn', x, y)
+      // spawn on random size of map
+      // const { width, height } = scene.context.canvas
+      // let offsetX = width
+      // let offsetY = 0
+      // const dir = Math.floor(Math.random() * 4)
+      // if (dir === 1) {
+      //   offsetX = -width
+      //   offsetY = 0
+      // } else if (dir === 2) {
+      //   offsetX = 0
+      //   offsetY = -height
+      // } else if (dir === 3) {
+      //   offsetX = 0
+      //   offsetY = height
+      // }
+      // const x = offsetX + scene.player.sprite.x + (Math.random() * width) / 2
+      // const y = offsetY + scene.player.sprite.y + (Math.random() * height) / 2
       const enemy = pool.get({
         x,
         y,
@@ -52,11 +51,6 @@ export const Enemies = (scene) => {
       pool.clear()
     },
     update() {
-      if (spawnTimer > 0) spawnTimer--
-      else if (spawnTimer === 0) {
-        this.spawn()
-        spawnTimer = SPAWN_TIME
-      }
       pool.update()
       bullets.update()
     },
@@ -66,7 +60,7 @@ export const Enemies = (scene) => {
   }
 }
 
-const ENEMY_COUNT = 5
+const ENEMY_COUNT = 10
 
 class Enemy extends Sprite {
   constructor(properties) {
@@ -93,8 +87,8 @@ class Enemy extends Sprite {
     if (this.target) {
       const angle = angleToTarget(this, this.target) - 1.57
       const speed = getDist(this, this.target) < 100 ? 0 : 2
-      this.dy = -speed * Math.cos(angle)
-      this.dx = -speed * Math.sin(angle)
+      this.dy = speed * Math.sin(angle)
+      this.dx = speed * Math.cos(angle)
     }
   }
 }
