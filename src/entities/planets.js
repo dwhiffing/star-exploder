@@ -75,6 +75,9 @@ export class Planet extends Sprite {
     })
     this.parent?.map.forceUpdate()
   }
+  land() {
+    setStoreItem('last-planet', { x: this.x, y: this.y })
+  }
   die() {
     this.color = 'blue'
   }

@@ -76,6 +76,15 @@ export const GameScene = ({ canvas }) => {
       )
 
       checkCollisions(
+        planets.getAliveObjects(),
+        [player.sprite],
+        (planet, player) => {
+          // player.damage(-1)
+          planet.land()
+        },
+      )
+
+      checkCollisions(
         pickups.getAliveObjects(),
         [player.sprite],
         (pickup, player) => {

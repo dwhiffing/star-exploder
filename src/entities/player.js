@@ -13,10 +13,10 @@ export const Player = ({ scene, x, y }) => {
   let bulletTimer = 0
   const bullets = Bullets(scene)
   const { width, height } = scene.context.canvas
-
+  const lastPlanet = getStoreItem('last-planet')
   let sprite = new Sprite({
-    x,
-    y,
+    x: lastPlanet?.x || x,
+    y: lastPlanet?.y || y,
     anchor: { x: 0.5, y: 0.5 },
     color: 'blue',
     width: 30,

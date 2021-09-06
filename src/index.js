@@ -30,8 +30,8 @@ const startMenu = () => {
   scene = MenuScene({ canvas, onNew: newGame, onContinue: startGame })
 }
 
-startMenu()
-// startGame()
+// startMenu()
+startGame()
 
 GameLoop({
   update: (...rest) => scene && scene.update(...rest),
