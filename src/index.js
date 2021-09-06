@@ -15,6 +15,11 @@ initKeys()
 
 let scene
 
+const newGame = () => {
+  localStorage.clear()
+  startGame()
+}
+
 const startGame = () => {
   scene && scene.shutdown()
   scene = GameScene({ canvas })
@@ -22,11 +27,11 @@ const startGame = () => {
 
 const startMenu = () => {
   scene && scene.shutdown()
-  scene = MenuScene({ canvas, onDown: startGame })
+  scene = MenuScene({ canvas, onNew: newGame, onContinue: startGame })
 }
 
-// startMenu()
-startGame()
+startMenu()
+// startGame()
 
 GameLoop({
   update: (...rest) => scene && scene.update(...rest),

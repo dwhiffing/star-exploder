@@ -23,6 +23,12 @@ export default {
         ttl: true,
         velocity: true,
       },
+      text: {
+        textAlign: true,
+        rtl: true,
+        newLine: true,
+        autoNewLine: true,
+      },
     }),
     commonjs(),
     nodeResolve(),
