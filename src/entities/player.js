@@ -3,7 +3,7 @@ import { Sprite } from './sprite'
 import { Bullets } from './bullets'
 
 export const Player = ({ scene, x, y }) => {
-  const speed = 0.05
+  const speed = 0.1
   let bulletTimer = 0
   const bullets = Bullets(scene)
   const { width, height } = scene.context.canvas
@@ -14,8 +14,8 @@ export const Player = ({ scene, x, y }) => {
     health: 10,
     anchor: { x: 0.5, y: 0.5 },
     color: 'blue',
-    width: 40,
-    height: 40,
+    width: 30,
+    height: 30,
     gold: 0,
   })
 
