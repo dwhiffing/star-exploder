@@ -1,4 +1,4 @@
-import { collides, Scene } from 'kontra'
+import { collides, getStoreItem, Scene, setStoreItem } from 'kontra'
 import {
   Inventory,
   Enemies,
@@ -58,7 +58,7 @@ export const GameScene = ({ canvas }) => {
 
       checkCollisions(
         player.bullets.getAliveObjects(),
-        enemies.pool.getAliveObjects(),
+        [...planets.getAliveObjects(), ...enemies.pool.getAliveObjects()],
         (bullet, enemy) => {
           enemy.damage(1)
           bullet.ttl = 0

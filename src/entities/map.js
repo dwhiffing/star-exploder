@@ -82,6 +82,12 @@ export const GameMap = (scene) => {
 
   return {
     rowCount,
+    forceUpdate() {
+      lastOffsetX = null
+      lastOffsetY = null
+      updatePlanets()
+    },
+    updatePlanets,
     getClosest(sprite) {
       return planets
         .filter((p) => p.color !== 'black')
@@ -124,7 +130,6 @@ export const GameMap = (scene) => {
       player.render()
       planets.forEach((planet) => planet.render())
     },
-    updatePlanets,
     getPlayerCoords() {
       const { x, y } = scene.player.sprite
       const { width, height } = scene.context.canvas

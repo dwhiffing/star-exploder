@@ -26,6 +26,7 @@ export class Pool extends BasePool.class {
       return super.get(...args)
     }
     const sprite = super.get(this.opts.get(...args))
+    sprite.scene = this.scene
     if (!sprite) return
     if (!this.scene.children.includes(sprite)) {
       this.scene.addChild(sprite)

@@ -1,10 +1,13 @@
+import { getStoreItem, setStoreItem } from 'kontra'
 import { COORDS, hashCode } from '../utils'
+import { Sprite } from './sprite'
 import { Pool } from './pool'
 
 export const Planets = (scene, opts = {}) => {
   let lastCoords = {}
   const pool = new Pool(scene, {
     maxSize: 9,
+    create: (...args) => new Planet(...args),
     autoInit: true,
     update(x, y) {
       const chunkSize = scene.context.canvas.width * PLANET_CHUNK_FACTOR
@@ -21,6 +24,9 @@ export const Planets = (scene, opts = {}) => {
         const stats = planetStats(_x, _y, chunkSize)
         planet.x = stats.x
         planet.y = stats.y
+        planet._x = _x
+        planet._y = _y
+        planet.health = stats.health
         planet.color = stats.color
         planet.width = stats.isPlanet ? stats.size : 0
         planet.height = stats.isPlanet ? stats.size : 0
@@ -34,13 +40,28 @@ export const planetStats = (_x, _y, chunkSize) => {
   const seedBase = `thisistheplanetseedokay-${_x},${_y}`
   const x = _x * chunkSize + chunkSize / 2
   const y = _y * chunkSize + chunkSize / 2
-  const color = COLORS[hashCode(`${seedBase}color`) % 4]
   const size = 200 + 10 * (hashCode(`${seedBase}size`) % 5)
   const isPlanet = hashCode(`${seedBase}planet`) % 223 === 0
+  const store = getStoreItem('planets') || {}
+  let health = store[`${_x}-${_y}`]?.health
+  health = typeof health === 'number' ? health : 10
+  const color = health > 0 ? 'red' : 'blue'
 
-  return { x, y, color, size, isPlanet }
+  return { x, y, color, size, isPlanet, health }
 }
 
 export const PLANET_CHUNK_FACTOR = 1
 
-const COLORS = ['white', 'yellow', 'blue', 'red']
+export class Planet extends Sprite {
+  damage(n) {
+    super.damage(n)
+    setStoreItem('planets', {
+      ...getStoreItem('planets'),
+      [`${this._x}-${this._y}`]: { health: this.health },
+    })
+    this.parent?.map.forceUpdate()
+  }
+  die() {
+    this.color = 'blue'
+  }
+}
