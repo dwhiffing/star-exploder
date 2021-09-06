@@ -7,12 +7,14 @@ import {
   Planets,
   Stars,
   GameMap,
+  Hud,
 } from '../entities'
 
 export const GameScene = ({ canvas }) => {
   let scene = Scene({ id: 'game' })
   let stars = Stars(scene)
   let map = GameMap(scene)
+  let hud = Hud(scene)
   let planets = Planets(scene)
   stars.objects.forEach((star) => scene.addChild(star))
   planets.objects.forEach((planet) => scene.addChild(planet))
@@ -30,6 +32,7 @@ export const GameScene = ({ canvas }) => {
   scene.player = player
   scene.pickups = pickups
   scene.map = map
+  scene.hud = hud
 
   const checkCollisions = (groupA, groupB, onCollide) => {
     groupA.forEach((itemA) =>
@@ -50,6 +53,7 @@ export const GameScene = ({ canvas }) => {
       pickups.update()
       inventory.update()
       map.update()
+      hud.update()
       scene.lookAt(player.sprite)
 
       checkCollisions(
@@ -81,6 +85,7 @@ export const GameScene = ({ canvas }) => {
     },
     render() {
       scene.render()
+      hud.render()
       inventory.render()
       map.render()
     },
