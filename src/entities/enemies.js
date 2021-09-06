@@ -14,7 +14,6 @@ export const Enemies = (scene) => {
     pool,
     bullets,
     spawn({ x, y }) {
-      console.log('spawn', x, y)
       // spawn on random size of map
       // const { width, height } = scene.context.canvas
       // let offsetX = width

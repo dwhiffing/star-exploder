@@ -3,7 +3,7 @@ import { COORDS, getDist, hashCode } from '../utils'
 import { Sprite } from './sprite'
 import { Pool } from './pool'
 
-const SPAWN_TIME = 500
+const SPAWN_TIME = 200
 
 export const Planets = (scene, opts = {}) => {
   let lastCoords = {}
