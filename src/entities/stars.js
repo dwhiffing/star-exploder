@@ -4,7 +4,7 @@ import { Pool } from './pool'
 export const Stars = (scene) => {
   let lastCoords = {}
   const pool = new Pool(scene, {
-    maxSize: 9 * 50,
+    maxSize: 9 * 30,
     autoInit: true,
     update(x, y) {
       const chunkSize = scene.context.canvas.width
