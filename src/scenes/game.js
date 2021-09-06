@@ -1,6 +1,7 @@
-import { collides, getStoreItem, Scene, setStoreItem } from 'kontra'
+import { collides, Scene } from 'kontra'
 import {
   Inventory,
+  Station,
   Enemies,
   Pickups,
   Player,
@@ -28,10 +29,12 @@ export const GameScene = ({ canvas }) => {
   let enemies = Enemies(scene)
   let pickups = Pickups(scene)
   let inventory = Inventory(scene)
+  let station = Station(scene)
 
   scene.player = player
   scene.pickups = pickups
   scene.enemies = enemies
+  scene.station = station
   scene.map = map
   scene.hud = hud
 
@@ -53,9 +56,13 @@ export const GameScene = ({ canvas }) => {
       enemies.update()
       pickups.update()
       inventory.update()
+      station.update()
       map.update()
       hud.update()
-      scene.lookAt(player.sprite)
+      scene.lookAt({
+        x: player.sprite.x + (station.active ? 200 : 0),
+        y: player.sprite.y,
+      })
 
       checkCollisions(
         player.bullets.getAliveObjects(),
@@ -96,6 +103,7 @@ export const GameScene = ({ canvas }) => {
     render() {
       scene.render()
       hud.render()
+      station.render()
       inventory.render()
       map.render()
     },

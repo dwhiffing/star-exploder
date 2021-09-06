@@ -50,7 +50,7 @@ export const Planets = (scene, opts = {}) => {
   return pool
 }
 
-export const planetStats = (_x, _y, chunkSize) => {
+export const planetStats = (_x, _y, chunkSize = 800 * PLANET_CHUNK_FACTOR) => {
   const seedBase = `thisistheplanetseedokay-${_x},${_y}`
   const x = _x * chunkSize + chunkSize / 2
   const y = _y * chunkSize + chunkSize / 2
@@ -76,7 +76,10 @@ export class Planet extends Sprite {
     this.parent?.map.forceUpdate()
   }
   land() {
-    setStoreItem('last-planet', { x: this.x, y: this.y })
+    if (!this.parent.station.active && this.color === 'blue') {
+      this.parent.station.open()
+      setStoreItem('last-planet', { x: this.x, y: this.y })
+    }
   }
   die() {
     this.color = 'blue'

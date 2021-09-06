@@ -1,10 +1,9 @@
-import { keyPressed, Sprite, Text } from 'kontra'
+import { Sprite, Text } from 'kontra'
 
-export const Inventory = (scene) => {
+export const Station = (scene) => {
   const { width, height } = scene.context.canvas
-  let active = false
+  let active = true
   const BUFFER = 40
-  let allowTrigger = true
   const base = {
     font: '20px Arial',
     color: 'white',
@@ -13,7 +12,7 @@ export const Inventory = (scene) => {
   }
 
   let back = Sprite({
-    x: BUFFER,
+    x: width / 2 + BUFFER,
     y: BUFFER,
     width: width / 2 - BUFFER * 2,
     height: height - BUFFER * 2,
@@ -21,24 +20,25 @@ export const Inventory = (scene) => {
   })
 
   let text = Text({
-    text: 'Gold',
-    x: width / 4,
+    text: 'Station',
+    x: width / 2 + width / 4,
     y: height / 2 - 250,
     ...base,
   })
   return {
+    get active() {
+      return active
+    },
     shutdown() {},
-    update() {
-      if (keyPressed('e')) {
-        if (!allowTrigger) return
-        active = !active
-        if (active) {
-          text.text = `Gold: ${scene.player.sprite.gold}`
-        }
-        allowTrigger = false
-      } else {
-        allowTrigger = true
+    open() {
+      if (active) return
+      active = !active
+      if (active) {
+        // text.text = `Gold: ${scene.player.sprite.gold}`
       }
+    },
+    update() {
+      active = false
     },
     render() {
       if (!active) return
