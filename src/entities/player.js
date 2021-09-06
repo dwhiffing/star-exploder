@@ -8,6 +8,7 @@ import {
 import { Sprite } from './sprite'
 import { Bullets } from './bullets'
 
+const BASE_MAX = 20
 export const Player = ({ scene, x, y }) => {
   const speed = 0.15
   let bulletTimer = 0
@@ -21,8 +22,9 @@ export const Player = ({ scene, x, y }) => {
     color: 'blue',
     width: 30,
     height: 30,
+    maxHealth: BASE_MAX,
     gold: getStoreItem('player')?.gold || 0,
-    health: getStoreItem('player')?.health || 10,
+    health: getStoreItem('player')?.health || BASE_MAX,
   })
   const oldDamage = sprite.damage.bind(sprite)
   const damage = (n) => {
@@ -32,8 +34,8 @@ export const Player = ({ scene, x, y }) => {
   }
   sprite.damage = damage
 
-  const pickup = () => {
-    sprite.gold += 1
+  const pickup = (n = 1) => {
+    sprite.gold += n
     const current = getStoreItem('player') || {}
     setStoreItem('player', { ...current, gold: sprite.gold })
   }
@@ -43,6 +45,14 @@ export const Player = ({ scene, x, y }) => {
     sprite,
     bullets,
     shutdown() {},
+    repair() {
+      console.log('try')
+      if (sprite.gold > 0) {
+        pickup(-1)
+        damage(-sprite.maxHealth + sprite.health)
+        console.log(-sprite.maxHealth + sprite.health)
+      }
+    },
     update() {
       sprite.ddx = 0
       sprite.ddy = 0
@@ -67,13 +77,17 @@ export const Player = ({ scene, x, y }) => {
 
       if (sprite.health <= 0) {
         setTimeout(() => {
-          sprite.health = 10
+          sprite.health = sprite.maxHealth
           sprite.ttl = Infinity
         }, 1000)
       }
 
       if (bulletTimer > 0) bulletTimer--
-      if (pointerPressed('left') && bulletTimer === 0) {
+      if (
+        pointerPressed('left') &&
+        bulletTimer === 0 &&
+        !scene.station.active
+      ) {
         bulletTimer = 10
         const pointer = getPointer()
         const x = sprite.x - width / 2 + pointer.x

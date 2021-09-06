@@ -1,4 +1,4 @@
-import { Sprite, Text } from 'kontra'
+import { Button, Sprite, Text } from 'kontra'
 
 export const Station = (scene) => {
   const { width, height } = scene.context.canvas
@@ -25,6 +25,21 @@ export const Station = (scene) => {
     y: height / 2 - 250,
     ...base,
   })
+
+  let button = Button({
+    x: width / 2 + width / 4,
+    y: height / 2 + 220,
+    text: {
+      text: 'Repair',
+      color: 'white',
+      font: '40px Arial, sans-serif',
+      textAlign: 'center',
+      anchor: { x: 0.5, y: 0.5 },
+    },
+    onDown() {
+      scene.player.repair()
+    },
+  })
   return {
     get active() {
       return active
@@ -44,6 +59,7 @@ export const Station = (scene) => {
       if (!active) return
       back.render()
       text.render()
+      button.render()
     },
   }
 }

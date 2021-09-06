@@ -95,7 +95,7 @@ export const GameScene = ({ canvas }) => {
         pickups.getAliveObjects(),
         [player.sprite],
         (pickup, player) => {
-          player.pickup(pickup)
+          player.pickup(1)
           pickup.ttl = 0
         },
       )

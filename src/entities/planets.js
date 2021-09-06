@@ -50,6 +50,7 @@ export const Planets = (scene, opts = {}) => {
   return pool
 }
 
+const PLANET_HEALTH = 10
 export const planetStats = (_x, _y, chunkSize = 800 * PLANET_CHUNK_FACTOR) => {
   const seedBase = `thisistheplanetseedokay-${_x},${_y}`
   const x = _x * chunkSize + chunkSize / 2
@@ -58,7 +59,7 @@ export const planetStats = (_x, _y, chunkSize = 800 * PLANET_CHUNK_FACTOR) => {
   const isPlanet = hashCode(`${seedBase}planet`) % 223 === 0
   const store = getStoreItem('planets') || {}
   let health = store[`${_x}-${_y}`]?.health
-  health = typeof health === 'number' ? health : 10
+  health = typeof health === 'number' ? health : PLANET_HEALTH
   const color = health > 0 ? 'red' : 'blue'
 
   return { x, y, color, size, isPlanet, health }
