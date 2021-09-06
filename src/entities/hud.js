@@ -1,4 +1,4 @@
-import { GameObject } from 'kontra'
+import { GameObject, Text } from 'kontra'
 
 export const Hud = (scene) => {
   let arrows = []
@@ -15,7 +15,15 @@ export const Hud = (scene) => {
 
     arrows.push(arrow)
   }
-
+  let health = Text({
+    text: '100',
+    font: '12px Arial',
+    color: '#fff',
+    x: 400,
+    y: 402,
+    anchor: { x: 0.5, y: 0.5 },
+    textAlign: 'center',
+  })
   return {
     shutdown() {},
     update() {
@@ -27,9 +35,11 @@ export const Hud = (scene) => {
         arrows[i].color = planet.color
         arrows[i].opacity = Math.max(0, 1 - planet.dist / 15000)
       })
+      health.text = `${scene.player.sprite.health}`
     },
     render() {
       arrows.forEach((arrow) => arrow.render())
+      health.render()
     },
   }
 }

@@ -1,4 +1,10 @@
-import { getPointer, keyPressed, pointerPressed } from 'kontra'
+import {
+  getPointer,
+  getStoreItem,
+  keyPressed,
+  pointerPressed,
+  setStoreItem,
+} from 'kontra'
 import { Sprite } from './sprite'
 import { Bullets } from './bullets'
 
@@ -11,16 +17,25 @@ export const Player = ({ scene, x, y }) => {
   let sprite = new Sprite({
     x,
     y,
-    health: 10,
     anchor: { x: 0.5, y: 0.5 },
     color: 'blue',
     width: 30,
     height: 30,
-    gold: 0,
+    gold: getStoreItem('player')?.gold || 0,
+    health: getStoreItem('player')?.health || 10,
   })
+  const oldDamage = sprite.damage.bind(sprite)
+  const damage = (n) => {
+    oldDamage(n)
+    const current = getStoreItem('player') || {}
+    setStoreItem('player', { ...current, health: sprite.health })
+  }
+  sprite.damage = damage
 
   const pickup = () => {
     sprite.gold += 1
+    const current = getStoreItem('player') || {}
+    setStoreItem('player', { ...current, gold: sprite.gold })
   }
   sprite.pickup = pickup
 
