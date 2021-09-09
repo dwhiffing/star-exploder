@@ -3,7 +3,7 @@ import { COORDS, getDist, hashCode } from '../utils'
 import { Sprite } from './sprite'
 import { Pool } from './pool'
 
-const SPAWN_TIME = 200
+const SPAWN_TIME = 5000
 
 export const Planets = (scene, opts = {}) => {
   let lastCoords = {}
@@ -20,11 +20,13 @@ export const Planets = (scene, opts = {}) => {
       if (spawnTimer > 0) spawnTimer--
       else if (spawnTimer === 0) {
         const sorted = pool.objects
-          .filter((p) => p.width > 0)
+          .filter((p) => p.width > 0 && p.color !== 'blue')
           .map((p) => ({ p, dist: getDist(p, scene.player.sprite) }))
           .sort((a, b) => a.dist - b.dist)
-        if (sorted[0] && sorted[0].p.color !== 'blue')
-          scene.enemies.spawn(sorted[0].p)
+        if (sorted[0]) {
+          const { x, y } = sorted[0].p
+          scene.enemies.spawn({ x, y, number: 5 })
+        }
         spawnTimer = SPAWN_TIME
       }
 
