@@ -90,7 +90,7 @@ export const GameScene = ({ canvas }) => {
         player.bullets.getAliveObjects(),
         [...planets.getAliveObjects(), ...enemies.pool.getAliveObjects()],
         (bullet, enemy) => {
-          enemy.damage(1)
+          enemy.damage(bullet.damage)
           bullet.ttl = 0
         },
       )
@@ -99,7 +99,7 @@ export const GameScene = ({ canvas }) => {
         enemies.bullets.getAliveObjects(),
         [player.sprite],
         (bullet, player) => {
-          player.damage(1)
+          player.damage(bullet.damage)
           bullet.ttl = 0
         },
       )

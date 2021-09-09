@@ -13,7 +13,8 @@ export const Enemies = (scene) => {
   return {
     pool,
     bullets,
-    spawn({ x, y, number = 1 }) {
+    spawn({ x, y, level = 1 }) {
+      const number = randInt(1, level + 1)
       for (let i = 0; i < number; i++) {
         const enemy = pool.get({
           x,
@@ -21,7 +22,9 @@ export const Enemies = (scene) => {
           anchor: { x: 0.5, y: 0.5 },
           width: 30,
           height: 30,
-          health: 5,
+          health: 5 * level,
+          strength: 1 * level,
+          speed: 1 + 0.1 * level,
           color: 'red',
         })
         if (!enemy) return
@@ -43,7 +46,7 @@ export const Enemies = (scene) => {
   }
 }
 
-const ENEMY_COUNT = 10
+const ENEMY_COUNT = 20
 
 class Enemy extends Sprite {
   constructor(properties) {
@@ -70,7 +73,7 @@ class Enemy extends Sprite {
     if (this.bulletTimer > 0) this.bulletTimer--
     if (this.bulletTimer === 0) {
       this.bulletTimer = 100
-      this.bullets.get(this, this.getNewTarget())
+      this.bullets.get(this, this.getNewTarget(), { damage: this.strength })
     }
 
     if (!this.target) {
@@ -79,7 +82,7 @@ class Enemy extends Sprite {
     const distToTarget = getDist(this, this.target)
 
     const angle = angleToTarget(this, this.target) - 1.57
-    const speed = distToTarget < 100 ? 0 : 2
+    const speed = distToTarget < 100 ? 0 : this.speed
     this.dy = speed * Math.sin(angle)
     this.dx = speed * Math.cos(angle)
 

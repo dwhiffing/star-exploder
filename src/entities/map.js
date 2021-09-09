@@ -29,8 +29,7 @@ export const GameMap = (scene) => {
         const _y = y + offsetY * rowCount
         const stats = planetStats(_x, _y, chunkSize)
         if (stats.isPlanet) {
-          let planet = planets[i]
-          i++
+          let planet = planets[i++]
           planet._x = _x
           planet._y = _y
           planet.x = BUFFER2 + x * chunkSize + chunkSize / 2

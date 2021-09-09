@@ -8,9 +8,43 @@ import {
 import { Sprite } from './sprite'
 import { Bullets } from './bullets'
 
-const BASE_MAX = 20
+const GUNS = {
+  BASIC: {
+    count: 1,
+    delay: 30,
+    speed: 5,
+    size: 10,
+    color: 'yellow',
+    spread: 0,
+    damage: 10,
+  },
+  MACHINE: {
+    count: 1,
+    delay: 2,
+    speed: 5,
+    size: 5,
+    color: 'yellow',
+    spread: 0.1,
+    damage: 1,
+  },
+  SHOTGUN: {
+    count: 5,
+    delay: 20,
+    speed: 10,
+    size: 5,
+    damage: 1,
+    color: 'yellow',
+    spread: 0.1,
+  },
+}
+
 export const Player = ({ scene, x, y }) => {
-  const speed = 0.15
+  const speed = 0.1
+  const breakSpeed = 1
+  const maxSpeed = speed * 50
+  const maxHealth = 100
+  const gun = 'SHOTGUN'
+
   let bulletTimer = 0
   const bullets = Bullets(scene)
   const { width, height } = scene.context.canvas
@@ -22,10 +56,10 @@ export const Player = ({ scene, x, y }) => {
     color: 'blue',
     width: 30,
     height: 30,
-    maxHealth: BASE_MAX,
+    maxHealth: maxHealth,
     inventory: getStoreItem('player')?.inventory || [],
     gold: getStoreItem('player')?.gold || 0,
-    health: getStoreItem('player')?.health || BASE_MAX,
+    health: getStoreItem('player')?.health || maxHealth,
   })
   const oldDamage = sprite.damage.bind(sprite)
   const damage = (n) => {
@@ -83,20 +117,23 @@ export const Player = ({ scene, x, y }) => {
       sprite.ddx = 0
       sprite.ddy = 0
       if (keyPressed('up') || keyPressed('w')) {
-        sprite.ddy = -speed
+        if (sprite.dy > -maxSpeed) sprite.ddy = -speed
       }
       if (keyPressed('down') || keyPressed('s')) {
-        sprite.ddy = speed
+        if (sprite.dy < maxSpeed) sprite.ddy = speed
       }
       if (keyPressed('left') || keyPressed('a')) {
-        sprite.ddx = -speed
+        if (sprite.dx > -maxSpeed) sprite.ddx = -speed
       }
       if (keyPressed('right') || keyPressed('d')) {
-        sprite.ddx = speed
+        if (sprite.dx < maxSpeed) sprite.ddx = speed
       }
       if (keyPressed('space')) {
-        sprite.dx = 0
-        sprite.dy = 0
+        const _breakSpeed = speed * breakSpeed
+        sprite.dx += sprite.dx > 0 ? -_breakSpeed : _breakSpeed
+        sprite.dy += sprite.dy > 0 ? -_breakSpeed : _breakSpeed
+        if (Math.abs(sprite.dx) < 1) sprite.dx = 0
+        if (Math.abs(sprite.dy) < 1) sprite.dy = 0
       }
       sprite.update()
       bullets.update()
@@ -114,11 +151,13 @@ export const Player = ({ scene, x, y }) => {
         bulletTimer === 0 &&
         !scene.station.active
       ) {
-        bulletTimer = 10
+        bulletTimer = GUNS[gun].delay
         const pointer = getPointer()
         const x = sprite.x - width / 2 + pointer.x
         const y = sprite.y - height / 2 + pointer.y
-        bullets.get(sprite, { x, y })
+        for (let i = 0; i < GUNS[gun].count; i++) {
+          bullets.get(sprite, { x, y }, { ...GUNS[gun] })
+        }
       }
     },
     render() {
