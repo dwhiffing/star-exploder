@@ -12,6 +12,7 @@ import {
 } from '../entities'
 import { planetStats } from '../entities/planets'
 import { checkCollisions } from '../utils'
+import '../../lib/zzfx'
 
 export const GameScene = ({ canvas }) => {
   let scene = Scene({ id: 'game' })
@@ -47,6 +48,7 @@ export const GameScene = ({ canvas }) => {
     if (map.active) {
       const stats = planetStats(object._x, object._y)
       if (stats.health > 0) return
+      playSound('shoot')
       $player.x = stats.x
       $player.y = stats.y
       $player.dx = 0

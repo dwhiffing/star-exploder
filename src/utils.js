@@ -1,7 +1,13 @@
 import { collides } from 'kontra'
 
+// prettier-ignore
+const SOUNDS = {
+  // shoot: [, , 925, 0.04, 0.3, 0.6, 1, 0.3, , 6.27, -184, 0.09, 0.17],
+  shoot: [,,463,,.02,.17,,2.07,-7,,,,,.9,,.4,.03,.69,.01,.18],
+}
+
 window.muted = false
-window.playSound = (sound) => !window.muted && zzfx(...sound)
+window.playSound = (key) => !window.muted && SOUNDS[key] && zzfx(...SOUNDS[key])
 window.toggleMute = () => (window.muted = !window.muted)
 
 export const hashCode = function (str) {
