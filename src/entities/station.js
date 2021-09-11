@@ -27,8 +27,7 @@ export const Station = (scene) => {
     ...base,
   })
 
-  let inventory = []
-  let itemSlots = []
+  let upgradeSlots = []
   for (let i = 0; i < 40; i++) {
     let slot = Text({
       text: '',
@@ -39,7 +38,7 @@ export const Station = (scene) => {
       anchor: { x: 0.5, y: 0 },
     })
     track(slot)
-    itemSlots.push(slot)
+    upgradeSlots.push(slot)
   }
 
   let button = Button({
@@ -60,42 +59,107 @@ export const Station = (scene) => {
     get active() {
       return active
     },
-    get inventory() {
-      return inventory
-    },
-    set inventory(v) {
-      inventory = v
-    },
     shutdown() {},
     open(planet) {
       if (this.active) return
-      active = !active
-      if (planet._x === lastPlanet?._x && planet._y === lastPlanet?._y) return
-      lastPlanet = { _x: planet._x, _y: planet._y }
-      inventory = [
-        { name: 'item' + Math.floor(Math.random() * 100) },
-        { name: 'item' + Math.floor(Math.random() * 100) },
-        { name: 'item' + Math.floor(Math.random() * 100) },
-        { name: 'item' + Math.floor(Math.random() * 100) },
-        { name: 'item' + Math.floor(Math.random() * 100) },
-      ]
+
+      // TODO: take planet level into account
+      active = true
+      UPGRADES.filter(
+        (upgrade) => true || UPGRADES[planet.upgradeType].key === upgrade.key,
+      ).forEach((upgrade, index) => {
+        const playerLevel = scene.player.sprite.upgrades[upgrade.key] || 1
+        upgradeSlots[index].upgrade = upgrade
+        upgradeSlots[index].y = 150 + index * 70
+        if (playerLevel >= upgrade.max) {
+          upgradeSlots[index].opacity = 0.5
+          upgradeSlots[index].text =
+            'Upgrade: ' + '\n' + upgrade.label + ' ' + playerLevel + ' MAX'
+          return
+        }
+        upgradeSlots[index].text =
+          'Upgrade: ' +
+          '\n' +
+          upgrade.label +
+          ' ' +
+          (playerLevel + 1) +
+          '\nCost: ' +
+          upgrade.getCost(playerLevel)
+      })
     },
     update() {
-      if (active) {
-        itemSlots.forEach((s) => (s.text = ''))
-        inventory.forEach((item, index) => {
-          itemSlots[index].text = item?.name || ''
-          itemSlots[index].y = 150 + index * 20
-        })
-      }
       active = false
+
+      if (!active) return
     },
     render() {
       if (!active) return
       back.render()
       text.render()
       button.render()
-      itemSlots.forEach((t) => t.render())
+      upgradeSlots.forEach((t) => t.render())
     },
   }
 }
+
+export const UPGRADES = [
+  {
+    key: 'speed',
+    label: 'Speed/manuvering',
+    max: 3,
+    getCost: (n) => n * 1,
+    apply: (n, sprite) => {
+      sprite.stats.speed = 0.1 + (n + 1) * 0.05
+      sprite.stats.maxSpeed = sprite.stats.speed * (50 * n)
+      sprite.stats.breakSpeed = n
+    },
+  },
+  {
+    key: 'health',
+    label: 'Max Health',
+    max: 3,
+    getCost: (n) => n * 1,
+    apply: (n, sprite) => {
+      sprite.stats.health = (n + 1) * 100
+      sprite.stats.maxHealth = (n + 1) * 100
+    },
+  },
+  {
+    key: 'gunpower',
+    label: 'Gun Power',
+    max: 3,
+    getCost: (n) => n * 1,
+    apply: (n, sprite) => {
+      sprite.stats.gundamage = (n + 1) * 10
+      sprite.stats.gunsize = (n + 1) * 3
+    },
+  },
+  {
+    key: 'gunspeed',
+    label: 'Gun Speed',
+    max: 3,
+    getCost: (n) => n * 1,
+    apply: (n, sprite) => {
+      sprite.stats.gunspeed = (n + 1) * 2.5
+    },
+  },
+  {
+    key: 'gundelay',
+    label: 'Gun Delay',
+    max: 3,
+    getCost: (n) => n * 1,
+    apply: (n, sprite) => {
+      sprite.stats.gundelay = 5 + (30 - n * 10)
+    },
+  },
+  {
+    key: 'guncount',
+    label: 'Gun Bullets',
+    max: 3,
+    getCost: (n) => n * 1,
+    apply: (n, sprite) => {
+      sprite.stats.guncount = (n + 1) * 1
+      sprite.stats.gunspread = (n + 1) * 0.05
+    },
+  },
+]

@@ -19,7 +19,9 @@ export const Stars = (scene) => {
         const _x = COORDS[chunkIndex][0] + chunkX
         const _y = COORDS[chunkIndex][1] + chunkY
 
-        const seedBase = `seed-${_x},${_y},${index % (pool.maxSize / 9)}`
+        const seedBase = `${scene.seed}-${_x},${_y},${
+          index % (pool.maxSize / 9)
+        }`
         const x = (hashCode(`${seedBase}x`) % 100) / 100
         const y = (hashCode(`${seedBase}thatsthey`) % 100) / 100
         star.x = _x * chunkSize + (x * chunkSize - chunkSize / 2)

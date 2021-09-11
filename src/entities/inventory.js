@@ -27,7 +27,7 @@ export const Inventory = (scene) => {
     ...base,
   })
 
-  let itemSlots = []
+  let statTexts = []
   for (let i = 0; i < 40; i++) {
     let slot = Text({
       text: '',
@@ -38,7 +38,7 @@ export const Inventory = (scene) => {
       anchor: { x: 0.5, y: 0 },
     })
     track(slot)
-    itemSlots.push(slot)
+    statTexts.push(slot)
   }
 
   return {
@@ -58,17 +58,19 @@ export const Inventory = (scene) => {
       if (!active) return
 
       text.text = `Gold: ${scene.player.sprite.gold}`
-      itemSlots.forEach((s) => (s.text = ''))
-      scene.player.sprite.inventory.forEach((item, index) => {
-        itemSlots[index].text = item?.name || ''
-        itemSlots[index].y = 150 + index * 20
-      })
+      statTexts.forEach((s) => (s.text = ''))
+      Object.entries(scene.player.sprite.stats).forEach(
+        ([key, value], index) => {
+          statTexts[index].text = `${key}: ${value}`
+          statTexts[index].y = 150 + index * 20
+        },
+      )
     },
     render() {
       if (!active) return
       back.render()
       text.render()
-      itemSlots.forEach((t) => t.render())
+      statTexts.forEach((t) => t.render())
     },
   }
 }

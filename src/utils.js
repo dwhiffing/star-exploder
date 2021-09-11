@@ -1,4 +1,4 @@
-import { collides } from 'kontra'
+import { collides, getStoreItem, setStoreItem } from 'kontra'
 
 // prettier-ignore
 const SOUNDS = {
@@ -47,4 +47,23 @@ export const checkCollisions = (groupA, groupB, onCollide) => {
       if (collides(itemA, itemB)) onCollide(itemA, itemB)
     }),
   )
+}
+
+export const getSeed = () => {
+  const storedSeed = getStoreItem('seed')
+  if (storedSeed) return storedSeed
+  const seed = generateSeed()
+  setStoreItem('seed', seed)
+  return seed
+}
+
+const generateSeed = (length = 20) => {
+  var result = ''
+  var characters =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  var charactersLength = characters.length
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength))
+  }
+  return result
 }

@@ -11,11 +11,12 @@ import {
   Hud,
 } from '../entities'
 import { planetStats } from '../entities/planets'
-import { checkCollisions } from '../utils'
+import { checkCollisions, getSeed } from '../utils'
 import '../../lib/zzfx'
 
 export const GameScene = ({ canvas }) => {
   let scene = Scene({ id: 'game' })
+  scene.seed = getSeed()
   let stars = Stars(scene)
   let map = GameMap(scene)
   let hud = Hud(scene)
@@ -44,26 +45,22 @@ export const GameScene = ({ canvas }) => {
 
   onPointerDown((e, object) => {
     if (!object) return
-    const $player = player.sprite
+    const _player = player.sprite
     if (map.active) {
-      const stats = planetStats(object._x, object._y)
+      const stats = planetStats(object._x, object._y, seed)
       if (stats.health > 0) return
       playSound('shoot')
-      $player.x = stats.x
-      $player.y = stats.y
-      $player.dx = 0
-      $player.dy = 0
-    } else if (inventory.active && station.active) {
-      if (object.type === 'player') {
-        $player.removeItem({ name: object?.text })
-        $player.setGold($player.gold + 1)
-      } else if (object.type === 'store') {
-        const canFit = $player.getItem({ name: object?.text })
-        if (!canFit || $player.gold < 1) return
-        station.inventory = station.inventory.filter(
-          (item) => item?.name !== object?.text,
-        )
-        $player.setGold($player.gold - 1)
+      _player.x = stats.x
+      _player.y = stats.y
+      _player.dx = 0
+      _player.dy = 0
+    } else if (station.active) {
+      if (object.type === 'store') {
+        const currentLevel = player.sprite.upgrades[object.upgrade.key] || 1
+        if (currentLevel >= object.upgrade.max) return
+        const level = currentLevel + 1
+        _player.setUpgrade(object.upgrade, level)
+        // _player.setGold(_player.gold - object.upgrade.getCost(level))
       }
     }
   })

@@ -7,43 +7,10 @@ import {
 } from 'kontra'
 import { Sprite } from './sprite'
 import { Bullets } from './bullets'
-
-const GUNS = {
-  BASIC: {
-    count: 1,
-    delay: 30,
-    speed: 5,
-    size: 10,
-    color: 'yellow',
-    spread: 0,
-    damage: 10,
-  },
-  MACHINE: {
-    count: 1,
-    delay: 2,
-    speed: 5,
-    size: 5,
-    color: 'yellow',
-    spread: 0.1,
-    damage: 1,
-  },
-  SHOTGUN: {
-    count: 5,
-    delay: 20,
-    speed: 10,
-    size: 5,
-    damage: 1,
-    color: 'yellow',
-    spread: 0.1,
-  },
-}
+import { UPGRADES } from './station'
 
 export const Player = ({ scene, x, y }) => {
-  const speed = 0.1
-  const breakSpeed = 1
-  const maxSpeed = speed * 50
-  const maxHealth = 100
-  const gun = 'SHOTGUN'
+  const upgrades = getStoreItem('player')?.upgrades || {}
 
   let bulletTimer = 0
   const bullets = Bullets(scene)
@@ -56,11 +23,29 @@ export const Player = ({ scene, x, y }) => {
     color: 'blue',
     width: 30,
     height: 30,
-    maxHealth: maxHealth,
-    inventory: getStoreItem('player')?.inventory || [],
     gold: getStoreItem('player')?.gold || 0,
-    health: getStoreItem('player')?.health || maxHealth,
+    upgrades: upgrades,
+    health: getStoreItem('player')?.health || 100,
+    stats: {
+      speed: 0.1,
+      breakSpeed: 1,
+      maxSpeed: 0.1 * 50,
+      maxHealth: 100,
+      guncount: 1,
+      gundelay: 30,
+      gunspeed: 5,
+      gunsize: 10,
+      guncolor: 'yellow',
+      gunspread: 0,
+      gundamage: 10,
+    },
   })
+
+  Object.entries(upgrades).forEach(([k, v]) => {
+    const upgrade = UPGRADES.find((u) => u.key === k)
+    upgrade.apply(v, sprite)
+  })
+
   const oldDamage = sprite.damage.bind(sprite)
   const damage = (n) => {
     oldDamage(n)
@@ -68,6 +53,13 @@ export const Player = ({ scene, x, y }) => {
     setStoreItem('player', { ...current, health: sprite.health })
   }
   sprite.damage = damage
+  const setUpgrade = (upgrade, value) => {
+    upgrade.apply(value, sprite)
+    sprite.upgrades[upgrade.key] = value
+    const current = getStoreItem('player') || {}
+    setStoreItem('player', { ...current, upgrades: sprite.upgrades })
+  }
+  sprite.setUpgrade = setUpgrade
 
   const setGold = (n = 1) => {
     sprite.gold = n
@@ -77,31 +69,9 @@ export const Player = ({ scene, x, y }) => {
   sprite.setGold = setGold
 
   const pickup = (pickup) => {
-    if (pickup.type === 'gold') {
-      setGold(sprite.gold + 1)
-    } else {
-      getItem(pickup.item)
-    }
+    setGold(sprite.gold + 1)
   }
   sprite.pickup = pickup
-
-  const getItem = (item) => {
-    if (sprite.inventory.length >= 10) return
-    sprite.inventory.push(item)
-    const current = getStoreItem('player') || {}
-    setStoreItem('player', { ...current, inventory: sprite.inventory })
-    return true
-  }
-  sprite.getItem = getItem
-
-  const removeItem = (item) => {
-    sprite.inventory = sprite.inventory.filter(
-      (_item) => _item?.name !== item?.name,
-    )
-    const current = getStoreItem('player') || {}
-    setStoreItem('player', { ...current, inventory: sprite.inventory })
-  }
-  sprite.removeItem = removeItem
 
   return {
     sprite,
@@ -110,12 +80,13 @@ export const Player = ({ scene, x, y }) => {
     repair() {
       if (sprite.gold > 0) {
         pickup(-1)
-        damage(-sprite.maxHealth + sprite.health)
+        damage(-sprite.stats.maxHealth + sprite.health)
       }
     },
     update() {
       sprite.ddx = 0
       sprite.ddy = 0
+      const { speed, maxSpeed, breakSpeed } = sprite.stats
       if (keyPressed('up') || keyPressed('w')) {
         if (sprite.dy > -maxSpeed) sprite.ddy = -speed
       }
@@ -140,7 +111,7 @@ export const Player = ({ scene, x, y }) => {
 
       if (sprite.health <= 0) {
         setTimeout(() => {
-          sprite.health = sprite.maxHealth
+          sprite.health = sprite.stats.maxHealth
           sprite.ttl = Infinity
         }, 1000)
       }
@@ -151,12 +122,17 @@ export const Player = ({ scene, x, y }) => {
         bulletTimer === 0 &&
         !scene.station.active
       ) {
-        bulletTimer = GUNS[gun].delay
+        bulletTimer = sprite.stats.gundelay
         const pointer = getPointer()
         const x = sprite.x - width / 2 + pointer.x
         const y = sprite.y - height / 2 + pointer.y
-        for (let i = 0; i < GUNS[gun].count; i++) {
-          bullets.get(sprite, { x, y }, { ...GUNS[gun] })
+        const size = sprite.stats.gunsize
+        const color = sprite.stats.guncolor
+        const speed = sprite.stats.gunspeed
+        const spread = sprite.stats.gunspread
+        const damage = sprite.stats.gundamage
+        for (let i = 0; i < sprite.stats.guncount; i++) {
+          bullets.get(sprite, { x, y }, { size, color, speed, spread, damage })
         }
       }
     },
