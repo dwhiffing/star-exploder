@@ -109,6 +109,9 @@ export const GameMap = (scene) => {
       if (keyPressed('m')) {
         if (!allowTrigger) return
         active = !active
+        if (active) {
+          this.forceUpdate()
+        }
         allowTrigger = false
       } else {
         allowTrigger = true

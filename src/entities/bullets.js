@@ -14,7 +14,7 @@ export const Bullets = (scene) => {
         damage = 1,
       } = opts
       const angle =
-        angleToTarget(start, target) - 1.57 + randInt(-2, 2) * spread
+        angleToTarget(start, target) - 1.57 + randInt(-1, 1) * spread
       const _speed = speed + randInt(-1, 1)
       return {
         x,

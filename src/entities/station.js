@@ -109,7 +109,7 @@ export const UPGRADES = [
     max: 3,
     getCost: (n) => n * 1,
     apply: (n, sprite) => {
-      sprite.stats.speed = 0.1 + (n + 1) * 0.05
+      sprite.stats.speed = 0.1 + (n + 1) * 0.01
       sprite.stats.maxSpeed = sprite.stats.speed * (50 * n)
       sprite.stats.breakSpeed = n
     },
@@ -130,7 +130,7 @@ export const UPGRADES = [
     max: 3,
     getCost: (n) => n * 1,
     apply: (n, sprite) => {
-      sprite.stats.gundamage = (n + 1) * 10
+      sprite.stats.gundamage = (n + 1) * 3
       sprite.stats.gunsize = (n + 1) * 3
     },
   },
@@ -149,7 +149,7 @@ export const UPGRADES = [
     max: 3,
     getCost: (n) => n * 1,
     apply: (n, sprite) => {
-      sprite.stats.gundelay = 5 + (30 - n * 10)
+      sprite.stats.gundelay = 5 + (30 - n * 8)
     },
   },
   {
@@ -159,7 +159,7 @@ export const UPGRADES = [
     getCost: (n) => n * 1,
     apply: (n, sprite) => {
       sprite.stats.guncount = (n + 1) * 1
-      sprite.stats.gunspread = (n + 1) * 0.05
+      sprite.stats.gunspread = 0.2
     },
   },
 ]
