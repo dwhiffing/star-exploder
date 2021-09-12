@@ -21,18 +21,20 @@ export const Planets = (scene, opts = {}) => {
           .filter((p) => p.width > 0 && p.color !== 'blue')
           .map((p) => ({ p, dist: getDist(p, scene.player.sprite) }))
           .sort((a, b) => a.dist - b.dist)[0]?.p
+        // TODO: sometimes not spawning
         if (planet) {
           const { x, y, level = 1 } = planet
-          spawnTimer = 700 - level * 100
           const maxSpawns = Math.floor(3 + level * 2)
-          const enemiesPerSpawn = Math.floor(3 + level / 2)
-          if (scene.enemies.pool.getAliveObjects().length < maxSpawns)
+          const enemiesPerSpawn = Math.floor(2.5 + level / 2)
+          if (scene.enemies.pool.getAliveObjects().length < maxSpawns) {
+            spawnTimer = 700 - level * 100
             scene.enemies.spawn({
               x,
               y,
-              number: randInt(Math.floor(enemiesPerSpawn / 2), enemiesPerSpawn),
+              number: randInt(Math.round(enemiesPerSpawn / 2), enemiesPerSpawn),
               level,
             })
+          }
         }
       }
 
@@ -84,8 +86,9 @@ export const planetStats = (
       { x: 34800, y: 34800 },
     )
     level = Math.min(4, Math.floor(distanceToCenter / 30000) + 1)
+    // level = Math.min(4, Math.floor(distanceToCenter / 10000) + 1)
 
-    size = 200 + 50 * level
+    size = 100 + 75 * level
     const item = store[`${_x}-${_y}`] || {}
     health = item?.health
     index = item?.index
@@ -95,9 +98,12 @@ export const planetStats = (
     if (typeof index !== 'number' && health < maxHealth) {
       const store = getStoreItem('planets') || {}
       index = Object.keys(store).length - 1
+      if (index >= 1) {
+        startMenu()
+      }
       setStoreItem('planets', {
         ...store,
-        [`${_x}-${_y}`]: { ...item, index: Object.keys(store).length - 1 },
+        [`${_x}-${_y}`]: { ...item, index },
       })
     }
     upgradeType = item?.index % 5 || 0
