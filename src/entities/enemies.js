@@ -21,15 +21,16 @@ export const Enemies = (scene) => {
             x,
             y,
             anchor: { x: 0.5, y: 0.5 },
-            width: 35,
-            height: 35,
+            width: 30 + level * 5,
+            height: 30 + level * 5,
             level,
             healthBar: true,
             health,
             maxHealth: health,
-            strength: 2 + 1 * level,
-            speed: 1 + 0.1 * level,
-            color: 'red',
+            strength: 5 + 1 * level,
+            speed: 1 + level,
+            ttl: 8000,
+            color: ['white', 'yellow', 'orange', 'red'][level - 1],
           })
           if (!enemy) return
           if (!scene.children.includes(enemy)) {
