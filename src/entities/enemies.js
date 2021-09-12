@@ -64,11 +64,12 @@ class Enemy extends ShipSprite {
 
   die() {
     super.die()
+    if (randInt(0, 1) === 0) return
     const multi = randInt(0, 5) === 0 ? 2 : 1
     this.scene.pickups.get({
       x: this.x,
       y: this.y,
-      value: randInt(1, 6) * this.level * multi,
+      value: randInt(3, 10) * this.level * multi,
     })
   }
 

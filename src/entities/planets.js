@@ -22,8 +22,8 @@ export const Planets = (scene, opts = {}) => {
           .map((p) => ({ p, dist: getDist(p, scene.player.sprite) }))
           .sort((a, b) => a.dist - b.dist)[0]?.p
         if (planet) {
-          spawnTimer = 700 - level * 100
           const { x, y, level = 1 } = planet
+          spawnTimer = 700 - level * 100
           const maxSpawns = Math.floor(3 + level * 2)
           const enemiesPerSpawn = Math.floor(4 + level / 2)
           if (scene.enemies.pool.getAliveObjects().length < maxSpawns)
@@ -134,6 +134,16 @@ export class Planet extends Sprite {
     }
   }
   die() {
+    for (let i = 0; i < 50; i++) {
+      const multi = randInt(0, 5) === 0 ? 2 : 1
+      setTimeout(() => {
+        this.parent.pickups.get({
+          x: this.x + randInt(-100, 100),
+          y: this.y + randInt(-100, 100),
+          value: randInt(1, 6) * this.level * multi,
+        })
+      }, i * 10)
+    }
     this.color = 'blue'
   }
 
