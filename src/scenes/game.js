@@ -85,7 +85,10 @@ export const GameScene = ({ canvas }) => {
 
       checkCollisions(
         player.bullets.getAliveObjects(),
-        [...planets.getAliveObjects(), ...enemies.pool.getAliveObjects()],
+        [
+          ...planets.getAliveObjects().filter((p) => p.color !== 'blue'),
+          ...enemies.pool.getAliveObjects(),
+        ],
         (bullet, enemy) => {
           enemy.damage(bullet.damage)
           bullet.ttl = 0
