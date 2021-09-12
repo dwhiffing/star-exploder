@@ -73,7 +73,6 @@ export const planetStats = (
   let level = 0
   let size = 0
   if (isPlanet) {
-    upgradeType = hashCode(`${seedBase}planet`) % 5
     const store = getStoreItem('planets') || {}
     // distance calculation needs to ignore passed chunk size
     const realChunkSize = 800 * PLANET_CHUNK_FACTOR
@@ -85,9 +84,21 @@ export const planetStats = (
     )
     level = Math.floor(distanceToCenter / 30000) + 1
     size = 200 + 50 * level
-    health = store[`${_x}-${_y}`]?.health
-    health = typeof health === 'number' ? health : 200 * level
+    const item = store[`${_x}-${_y}`] || {}
+    health = item?.health
+    index = item?.index
+    const maxHealth = 200 * level
+    health = typeof health === 'number' ? health : maxHealth
     color = health > 0 ? COLORS[level - 1] : 'blue'
+    if (typeof index !== 'number' && health < maxHealth) {
+      const store = getStoreItem('planets') || {}
+      index = Object.keys(store).length - 1
+      setStoreItem('planets', {
+        ...store,
+        [`${_x}-${_y}`]: { ...item, index: Object.keys(store).length - 1 },
+      })
+    }
+    upgradeType = item?.index % 5 || 0
   }
   const final = {
     _x,
@@ -117,9 +128,11 @@ export class Planet extends Sprite {
   damage(n) {
     if (this.health <= 0) return
     super.damage(n)
+    const planets = getStoreItem('planets') || {}
+    const key = `${this._x}-${this._y}`
     setStoreItem('planets', {
       ...getStoreItem('planets'),
-      [`${this._x}-${this._y}`]: { health: this.health },
+      [key]: { ...(planets[key] || {}), health: this.health },
     })
     this.parent?.map.forceUpdate()
   }
@@ -134,6 +147,7 @@ export class Planet extends Sprite {
     }
   }
   die() {
+    this.health = 0
     for (let i = 0; i < 50; i++) {
       const multi = randInt(0, 5) === 0 ? 2 : 1
       setTimeout(() => {

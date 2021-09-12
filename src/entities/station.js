@@ -1,4 +1,5 @@
-import { Button, Sprite, Text, track } from 'kontra'
+import { Sprite, Text, track } from 'kontra'
+import { hashCode } from '../utils'
 
 export const Station = (scene) => {
   const { width, height } = scene.context.canvas
@@ -10,7 +11,6 @@ export const Station = (scene) => {
     anchor: { x: 0.5, y: 0.5 },
     textAlign: 'center',
   }
-  let lastPlanet = null
 
   let back = Sprite({
     x: width / 2 + BUFFER,
@@ -96,7 +96,7 @@ const baseGetCost =
   (n) =>
     Math.round((baseCost * (Math.pow(rate, n) - Math.pow(rate, n - 1))) / rate)
 
-export const UPGRADES = [
+export const UPGRADES = shuffle([
   {
     key: 'speed',
     label: 'Speed/manuvering',
@@ -148,4 +148,22 @@ export const UPGRADES = [
       sprite.stats.gunspread = 0.15
     },
   },
-]
+])
+
+function shuffle(array) {
+  var currentIndex = array.length,
+    randomIndex
+
+  while (currentIndex != 0) {
+    randomIndex = Math.floor(
+      (hashCode(localStorage.getItem('seed')) * currentIndex) % array.length,
+    )
+    currentIndex--
+    ;[array[currentIndex], array[randomIndex]] = [
+      array[randomIndex],
+      array[currentIndex],
+    ]
+  }
+
+  return array
+}
