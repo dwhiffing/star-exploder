@@ -67,3 +67,12 @@ const generateSeed = (length = 20) => {
   }
   return result
 }
+
+export function mkGradient({ ctx, r2, r1, c1, c2 }) {
+  ctx.rect(0, 0, r2 * 2, r2 * 2)
+  var g = ctx.createRadialGradient(r2, r2, r1, r2, r2, r2)
+  g.addColorStop(0, c1)
+  g.addColorStop(1, c2)
+  ctx.fillStyle = g
+  ctx.fill()
+}
