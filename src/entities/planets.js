@@ -179,12 +179,7 @@ export class Planet extends Sprite {
     const canvas = mkStar({
       pad,
       r: this.size / 2,
-      o1: this.color !== 'blue' ? '#FFF500' : '#3551dc',
-      o2: this.color !== 'blue' ? '#FFE300' : '#0453d2',
-      c2: this.color !== 'blue' ? '#FFC700' : '#0f52b4',
-      c3: this.color !== 'blue' ? '#FFAF00' : '#0051af',
-      h1: this.color !== 'blue' ? 'rgba(255,122,0,1)' : 'rgba(0,81,175,1)',
-      h2: this.color !== 'blue' ? 'rgba(255,12,0,0)' : 'rgba(0,81,175,0)',
+      ...getColors(this.color),
     })
 
     this.context.drawImage(
@@ -245,4 +240,57 @@ const mkStar = (opts) => {
   return canvas
 }
 
-const COLORS = ['red', 'orange', 'yellow', 'white']
+const COLORS = ['white', 'yellow', 'orange', 'red']
+
+const getColors = (color) => {
+  if (color === 'blue') {
+    return {
+      o1: '#3551dc',
+      o2: '#0453d2',
+      c2: '#0f52b4',
+      c3: '#0051af',
+      h1: 'rgba(0,81,175,1)',
+      h2: 'rgba(0,81,175,0)',
+    }
+  }
+  if (color === 'white') {
+    return {
+      o1: '#eeF5aa',
+      o2: '#eeE3aa',
+      c2: '#eeC7aa',
+      c3: '#eeAFaa',
+      h1: 'rgba(122,122,122,1)',
+      h2: 'rgba(122,122,122,0)',
+    }
+  }
+  if (color === 'yellow') {
+    return {
+      o1: '#FFF500',
+      o2: '#FFE300',
+      c2: '#FFC700',
+      c3: '#FFAF00',
+      h1: 'rgba(255,122,0,1)',
+      h2: 'rgba(255,12,0,0)',
+    }
+  }
+  if (color === 'orange') {
+    return {
+      o1: '#FFaa00',
+      o2: '#FFaa00',
+      c2: '#FFaa00',
+      c3: '#FFaa00',
+      h1: 'rgba(255,122,0,1)',
+      h2: 'rgba(255,12,0,0)',
+    }
+  }
+  if (color === 'red') {
+    return {
+      o1: '#Ff3300',
+      o2: '#Ff3300',
+      c2: '#Ff3300',
+      c3: '#Ff3300',
+      h1: 'rgba(200,12,0,1)',
+      h2: 'rgba(200,112,0,0)',
+    }
+  }
+}
