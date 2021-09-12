@@ -56,7 +56,7 @@ export const GameMap = (scene) => {
     color: '#000',
   })
 
-  for (let x = 0; x < 50; x++) {
+  for (let x = 0; x < 70; x++) {
     let planet = Sprite({
       x: 0,
       y: 0,

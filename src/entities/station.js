@@ -1,5 +1,5 @@
 import { Sprite, Text, track } from 'kontra'
-import { hashCode } from '../utils'
+import { getSeed, hashCode } from '../utils'
 
 export const Station = (scene) => {
   const { width, height } = scene.context.canvas
@@ -155,7 +155,7 @@ function shuffle(array) {
 
   while (currentIndex != 0) {
     randomIndex = Math.floor(
-      (hashCode(localStorage.getItem('seed')) * currentIndex) % array.length,
+      (hashCode(getSeed()) * currentIndex) % array.length,
     )
     currentIndex--
     ;[array[currentIndex], array[randomIndex]] = [

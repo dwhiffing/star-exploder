@@ -66,7 +66,7 @@ export const planetStats = (
   }
   const x = _x * chunkSize + chunkSize / 2
   const y = _y * chunkSize + chunkSize / 2
-  const isPlanet = hashCode(`${seedBase}planet`) % 223 === 0
+  const isPlanet = hashCode(`${seedBase}`) % 223 === 0
   let health = 0
   let maxHealth = 0
   let upgradeType = 0
@@ -83,13 +83,13 @@ export const planetStats = (
       { x: realX, y: realY },
       { x: 34800, y: 34800 },
     )
-    level = Math.min(5, Math.floor(distanceToCenter / 30000) + 1)
+    level = Math.min(4, Math.floor(distanceToCenter / 30000) + 1)
 
     size = 200 + 50 * level
     const item = store[`${_x}-${_y}`] || {}
     health = item?.health
     index = item?.index
-    maxHealth = 90 + Math.pow(10, level)
+    maxHealth = [120, 240, 500, 1000][level - 1]
     health = typeof health === 'number' ? health : maxHealth
     color = health > 0 ? COLORS[level - 1] : 'blue'
     if (typeof index !== 'number' && health < maxHealth) {
@@ -108,14 +108,14 @@ export const planetStats = (
     x,
     y,
     color,
-    size: isPlanet ? size : 0,
+    size,
     isPlanet,
     health,
     maxHealth,
     level,
     upgradeType,
-    width: isPlanet ? size : 0,
-    height: isPlanet ? size : 0,
+    width: size,
+    height: size,
   }
   statsCache[seedBase] = final
   return final
@@ -245,4 +245,4 @@ const mkStar = (opts) => {
   return canvas
 }
 
-const COLORS = ['red', 'orange', 'yellow', 'white', 'white', 'white', 'white']
+const COLORS = ['red', 'orange', 'yellow', 'white']
