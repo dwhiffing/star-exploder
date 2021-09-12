@@ -15,9 +15,22 @@ export const Hud = (scene) => {
 
     arrows.push(arrow)
   }
+  let money = Text({
+    text: '',
+    font: '14px Arial',
+    color: '#fff',
+    x: 400,
+    y: 330,
+    anchor: { x: 0.5, y: 0.5 },
+    textAlign: 'center',
+  })
 
   return {
     shutdown() {},
+    setText(text) {
+      money.text = `Money: ${text}`
+      setTimeout(() => (money.text = ''), 2000)
+    },
     update() {
       const closest = scene.map.getClosest(scene.player.sprite)
       closest.slice(0, 9).forEach((planet, i) => {
@@ -33,6 +46,7 @@ export const Hud = (scene) => {
     },
     render() {
       arrows.forEach((arrow) => arrow.render())
+      money.render()
     },
   }
 }

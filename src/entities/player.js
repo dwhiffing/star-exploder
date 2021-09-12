@@ -9,7 +9,7 @@ import { ShipSprite } from './sprite'
 import { Bullets, Circle } from './bullets'
 import { UPGRADES } from './station'
 
-export const Player = ({ scene, x, y }) => {
+export const Player = ({ scene, x: originX, y: originY }) => {
   const upgrades = getStoreItem('player')?.upgrades || {}
 
   let bulletTimer = 0
@@ -17,13 +17,13 @@ export const Player = ({ scene, x, y }) => {
   const { width, height } = scene.context.canvas
   const lastPlanet = getStoreItem('last-planet')
   let sprite = new ShipSprite({
-    x: lastPlanet?.x || x,
-    y: lastPlanet?.y || y,
+    x: lastPlanet?.x || originX,
+    y: lastPlanet?.y || originY,
     anchor: { x: 0.5, y: 0.5 },
     color: '#666',
     width: 50,
     height: 50,
-    gold: getStoreItem('player')?.gold || 0,
+    gold: getStoreItem('player')?.gold || 2000,
     upgrades: upgrades,
     health: getStoreItem('player')?.health || 100,
     stats: {
@@ -79,21 +79,14 @@ export const Player = ({ scene, x, y }) => {
   }
   sprite.setGold = setGold
 
-  const pickup = (pickup) => {
-    setGold(sprite.gold + 1)
-  }
-  sprite.pickup = pickup
-
   return {
     sprite,
     thrust,
     bullets,
     shutdown() {},
+
     repair() {
-      if (sprite.gold > 0) {
-        pickup(-1)
-        damage(-sprite.stats.maxHealth + sprite.health)
-      }
+      damage(-sprite.stats.maxHealth + sprite.health)
     },
     shoot() {
       bulletTimer = sprite.stats.gundelay
@@ -152,10 +145,12 @@ export const Player = ({ scene, x, y }) => {
       bullets.update()
 
       if (sprite.health <= 0) {
-        // TODO: need stronger death penalty.  Spawn at last base, lose gold
         setTimeout(() => {
+          sprite.x = lastPlanet?.x || originX
+          sprite.y = lastPlanet?.y || originY
           sprite.health = sprite.stats.maxHealth
           sprite.ttl = Infinity
+          sprite.gold = Math.floor(sprite.gold / 2)
         }, 1000)
       }
 

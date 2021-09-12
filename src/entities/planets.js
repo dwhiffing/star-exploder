@@ -3,12 +3,9 @@ import { COORDS, getDist, hashCode, gradient } from '../utils'
 import { drawHealthBar, Sprite } from './sprite'
 import { Pool } from './pool'
 
-const SPAWN_TIME = 250
-const PLANET_HEALTH = 200
-
 export const Planets = (scene, opts = {}) => {
   let lastCoords = {}
-  let spawnTimer = SPAWN_TIME
+  let spawnTimer = 0
   const pool = new Pool(scene, {
     maxSize: 9,
     create: (...args) => new Planet(...args),
@@ -24,14 +21,13 @@ export const Planets = (scene, opts = {}) => {
           .filter((p) => p.width > 0 && p.color !== 'blue')
           .map((p) => ({ p, dist: getDist(p, scene.player.sprite) }))
           .sort((a, b) => a.dist - b.dist)[0]?.p
+        spawnTimer = 250
         if (planet) {
           const { x, y, level = 1 } = planet
-          const maxSpawns = Math.floor(2 + level * 1.5)
+          const maxSpawns = Math.floor(3 + level * 2)
+          const enemiesPerSpawn = Math.floor(1 + level / 2)
           if (scene.enemies.pool.getAliveObjects().length < maxSpawns)
-            scene.enemies.spawn({ x, y, level })
-          spawnTimer = SPAWN_TIME
-        } else {
-          spawnTimer = SPAWN_TIME
+            scene.enemies.spawn({ x, y, number: enemiesPerSpawn, level })
         }
       }
 
@@ -85,7 +81,7 @@ export const planetStats = (
     level = Math.floor(distanceToCenter / 30000) + 1
     size = 200 + 50 * level
     health = store[`${_x}-${_y}`]?.health
-    health = typeof health === 'number' ? health : PLANET_HEALTH * level
+    health = typeof health === 'number' ? health : 200 * level
     color = health > 0 ? COLORS[level - 1] : 'blue'
   }
   const final = {
@@ -97,7 +93,7 @@ export const planetStats = (
     size: isPlanet ? size : 0,
     isPlanet,
     health,
-    maxHealth: health,
+    maxHealth: 200 * level,
     level,
     upgradeType,
     width: isPlanet ? size : 0,
@@ -148,6 +144,7 @@ export class Planet extends Sprite {
       })
     }
     var pad = 1.25
+    // TODO: different colors for planets
     const canvas = mkStar({
       pad,
       r: this.size / 2,

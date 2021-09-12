@@ -21,7 +21,7 @@ export const Station = (scene) => {
   })
 
   let text = Text({
-    text: 'Station',
+    text: 'Money:',
     x: width / 2 + width / 4,
     y: height / 2 - 300,
     ...base,
@@ -50,8 +50,14 @@ export const Station = (scene) => {
       if (this.active) return
 
       // TODO: take planet level into account
+      // TODO: not enough money should be red/faded
+      // TODO: render player gold here
+      // TODO: make upgrades look nicer
+      // TODO: 2 upgrades per station?
+      // TODO: only allow player to upgrade up to the station level + 1
       active = true
       scene.player.repair()
+      text.text = `Money: ${scene.player.sprite.gold}`
       UPGRADES.filter(
         (upgrade) => UPGRADES[planet.upgradeType].key === upgrade.key,
       ).forEach((upgrade, index) => {
@@ -64,6 +70,8 @@ export const Station = (scene) => {
             'Upgrade: ' + '\n' + upgrade.label + ' ' + playerLevel + ' MAX'
           return
         }
+        const cost = upgrade.getCost(playerLevel + 1)
+        if (scene.player.sprite.gold < cost) upgradeSlots[index].opacity = 0.5
         upgradeSlots[index].text =
           'Upgrade: ' +
           '\n' +
@@ -71,7 +79,7 @@ export const Station = (scene) => {
           ' ' +
           (playerLevel + 1) +
           '\nCost: ' +
-          upgrade.getCost(playerLevel)
+          cost
       })
     },
     update() {
@@ -91,7 +99,7 @@ export const Station = (scene) => {
 const baseGetCost =
   (baseCost = 10, rate = 1.4) =>
   (n) =>
-    Math.round((baseCost * (Math.pow(rate, n + 1) - Math.pow(rate, n))) / rate)
+    Math.round((baseCost * (Math.pow(rate, n) - Math.pow(rate, n - 1))) / rate)
 
 export const UPGRADES = [
   {
@@ -113,6 +121,7 @@ export const UPGRADES = [
     apply: (n, sprite) => {
       sprite.stats.maxHealth = n * 100
       sprite.health = sprite.stats.maxHealth
+      sprite.maxHealth = sprite.stats.maxHealth
     },
   },
   {

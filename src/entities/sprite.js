@@ -4,8 +4,6 @@ import { gradient } from '../utils'
 export class Sprite extends BaseSprite.class {
   constructor(properties) {
     super(properties)
-    this.maxHealth = properties?.maxHealth || this.health
-    this.health = this.maxHealth
   }
 
   damage(n) {

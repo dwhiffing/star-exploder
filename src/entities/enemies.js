@@ -16,24 +16,26 @@ export const Enemies = (scene) => {
     spawn({ x, y, number = 1, level = 1 }) {
       for (let i = 0; i < number; i++) {
         const health = 10 * level + randInt(0, 10 * level)
-        const enemy = pool.get({
-          x,
-          y,
-          anchor: { x: 0.5, y: 0.5 },
-          width: 35,
-          height: 35,
-          level,
-          healthBar: true,
-          health,
-          maxHealth: health,
-          strength: 2 + 1 * level,
-          speed: 1 + 0.1 * level,
-          color: 'red',
-        })
-        if (!enemy) return
-        if (!scene.children.includes(enemy)) {
-          scene.addChild(enemy)
-        }
+        setTimeout(() => {
+          const enemy = pool.get({
+            x,
+            y,
+            anchor: { x: 0.5, y: 0.5 },
+            width: 35,
+            height: 35,
+            level,
+            healthBar: true,
+            health,
+            maxHealth: health,
+            strength: 2 + 1 * level,
+            speed: 1 + 0.1 * level,
+            color: 'red',
+          })
+          if (!enemy) return
+          if (!scene.children.includes(enemy)) {
+            scene.addChild(enemy)
+          }
+        }, i * 500)
       }
     },
     destroy() {
@@ -62,7 +64,12 @@ class Enemy extends ShipSprite {
 
   die() {
     super.die()
-    this.scene.pickups.get(this)
+    const multi = randInt(0, 5) === 0 ? 2 : 1
+    this.scene.pickups.get({
+      x: this.x,
+      y: this.y,
+      value: randInt(1, 6) * this.level * multi,
+    })
   }
 
   getNewTarget(dist = 50) {
@@ -76,21 +83,22 @@ class Enemy extends ShipSprite {
     if (this.bulletTimer > 0) this.bulletTimer--
     if (this.bulletTimer === 0) {
       this.bulletTimer = 300 - this.level * 80 + randInt(-100, 100)
-      this.bullets.get(this, this.getNewTarget(), { damage: this.strength })
+      this.bullets.get(this, this.getNewTarget(), {
+        damage: this.strength,
+        speed: 5,
+      })
     }
 
     if (!this.target) {
       this.target = this.getNewTarget(200)
       const angle = angleToTarget(this, this.target) - 1.57
-      this.ddy = (this.speed / 20) * Math.sin(angle)
-      this.ddx = (this.speed / 20) * Math.cos(angle)
+      this.ddy = (this.speed / 40) * Math.sin(angle)
+      this.ddx = (this.speed / 40) * Math.cos(angle)
       setTimeout(() => {
         this.target = null
       }, randInt(500, 1500))
     }
     this.dx *= 0.98
     this.dy *= 0.98
-    if (this.ddy === 0 || this.ddx === 0)
-      console.log(this.speed, this.ddy, this.ddx, this.target)
   }
 }
