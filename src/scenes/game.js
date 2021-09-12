@@ -57,11 +57,10 @@ export const GameScene = ({ canvas }) => {
     } else if (station.active) {
       if (object.type === 'store') {
         const currentLevel = player.sprite.upgrades[object.upgrade.key] || 1
-        if (currentLevel >= object.upgrade.max) return
-        const level = currentLevel + 1
-        _player.setUpgrade(object.upgrade, level)
-        // TODO: ensure can afford
-        // _player.setGold(_player.gold - object.upgrade.getCost(level))
+        const cost = object.upgrade.getCost(currentLevel + 1)
+        if (currentLevel >= object.upgrade.max || _player.gold < cost) return
+        _player.setUpgrade(object.upgrade, currentLevel + 1)
+        _player.setGold(_player.gold - cost)
       }
     }
   })

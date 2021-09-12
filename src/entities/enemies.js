@@ -26,7 +26,7 @@ export const Enemies = (scene) => {
           healthBar: true,
           health,
           maxHealth: health,
-          strength: 1 * level,
+          strength: 2 + 1 * level,
           speed: 1 + 0.1 * level,
           color: 'red',
         })
@@ -75,32 +75,22 @@ class Enemy extends ShipSprite {
     if (!this.isAlive()) return
     if (this.bulletTimer > 0) this.bulletTimer--
     if (this.bulletTimer === 0) {
-      this.bulletTimer = 400 - this.level * 80 + randInt(-100, 100)
+      this.bulletTimer = 300 - this.level * 80 + randInt(-100, 100)
       this.bullets.get(this, this.getNewTarget(), { damage: this.strength })
     }
 
     if (!this.target) {
       this.target = this.getNewTarget(200)
-      const distToTarget = getDist(this, this.target)
       const angle = angleToTarget(this, this.target) - 1.57
-      const speed =
-        distToTarget <= 200 || getDist(this, this.scene.player.sprite) < 100
-          ? 0
-          : this.speed
-      this.ddy = (speed / 20) * Math.sin(angle)
-      this.ddx = (speed / 20) * Math.cos(angle)
+      this.ddy = (this.speed / 20) * Math.sin(angle)
+      this.ddx = (this.speed / 20) * Math.cos(angle)
+      setTimeout(() => {
+        this.target = null
+      }, randInt(500, 1500))
     }
     this.dx *= 0.98
     this.dy *= 0.98
-
-    const distToTarget = getDist(this, this.target)
-    if (distToTarget <= 200) {
-      if (this.triggered) return
-      setTimeout(() => {
-        this.triggered = false
-        this.target = null
-      }, randInt(500, 1500))
-      this.triggered = true
-    }
+    if (this.ddy === 0 || this.ddx === 0)
+      console.log(this.speed, this.ddy, this.ddx, this.target)
   }
 }

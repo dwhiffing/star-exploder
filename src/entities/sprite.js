@@ -1,4 +1,4 @@
-import { randInt, Sprite as BaseSprite } from 'kontra'
+import { Sprite as BaseSprite } from 'kontra'
 import { gradient } from '../utils'
 
 export class Sprite extends BaseSprite.class {
@@ -40,6 +40,7 @@ export class Sprite extends BaseSprite.class {
 }
 
 export const drawHealthBar = ({ ctx, x, y, width, height = 5, ratio }) => {
+  if (ratio === 1) return
   ctx.fillStyle = '#ff0000'
   ctx.fillRect(x, y, width, height)
   ctx.fillStyle = '#00ff00'

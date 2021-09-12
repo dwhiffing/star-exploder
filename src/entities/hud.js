@@ -15,15 +15,6 @@ export const Hud = (scene) => {
 
     arrows.push(arrow)
   }
-  let health = Text({
-    text: '100',
-    font: '12px Arial',
-    color: '#fff',
-    x: 400,
-    y: 402,
-    anchor: { x: 0.5, y: 0.5 },
-    textAlign: 'center',
-  })
 
   return {
     shutdown() {},
@@ -39,12 +30,9 @@ export const Hud = (scene) => {
         arrows[i].width = 13 * mult
         arrows[i].height = 6 * mult
       })
-
-      health.text = `${scene.player.sprite.health}`
     },
     render() {
       arrows.forEach((arrow) => arrow.render())
-      health.render()
     },
   }
 }

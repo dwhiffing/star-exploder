@@ -3,8 +3,8 @@ import { COORDS, getDist, hashCode, gradient } from '../utils'
 import { drawHealthBar, Sprite } from './sprite'
 import { Pool } from './pool'
 
-const SPAWN_TIME = 100
-const PLANET_HEALTH = 50
+const SPAWN_TIME = 250
+const PLANET_HEALTH = 200
 
 export const Planets = (scene, opts = {}) => {
   let lastCoords = {}
@@ -72,7 +72,7 @@ export const planetStats = (
   let level = 0
   let size = 0
   if (isPlanet) {
-    upgradeType = hashCode(`${seedBase}planet`) % 6
+    upgradeType = hashCode(`${seedBase}planet`) % 5
     const store = getStoreItem('planets') || {}
     // distance calculation needs to ignore passed chunk size
     const realChunkSize = 800 * PLANET_CHUNK_FACTOR

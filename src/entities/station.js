@@ -41,20 +41,6 @@ export const Station = (scene) => {
     upgradeSlots.push(slot)
   }
 
-  let button = Button({
-    x: width / 2 + width / 4,
-    y: height / 2 + 220,
-    text: {
-      text: 'Repair',
-      color: 'white',
-      font: '40px Arial, sans-serif',
-      textAlign: 'center',
-      anchor: { x: 0.5, y: 0.5 },
-    },
-    onDown() {
-      scene.player.repair()
-    },
-  })
   return {
     get active() {
       return active
@@ -65,8 +51,9 @@ export const Station = (scene) => {
 
       // TODO: take planet level into account
       active = true
+      scene.player.repair()
       UPGRADES.filter(
-        (upgrade) => true || UPGRADES[planet.upgradeType].key === upgrade.key,
+        (upgrade) => UPGRADES[planet.upgradeType].key === upgrade.key,
       ).forEach((upgrade, index) => {
         const playerLevel = scene.player.sprite.upgrades[upgrade.key] || 1
         upgradeSlots[index].upgrade = upgrade
@@ -96,7 +83,6 @@ export const Station = (scene) => {
       if (!active) return
       back.render()
       text.render()
-      button.render()
       upgradeSlots.forEach((t) => t.render())
     },
   }
@@ -125,8 +111,8 @@ export const UPGRADES = [
     max: 10,
     getCost: baseGetCost(100, 2),
     apply: (n, sprite) => {
-      sprite.maxHealth = n * 100
-      sprite.health = sprite.maxHealth
+      sprite.stats.maxHealth = n * 100
+      sprite.health = sprite.stats.maxHealth
     },
   },
   {

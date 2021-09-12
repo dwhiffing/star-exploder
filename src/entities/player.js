@@ -30,6 +30,7 @@ export const Player = ({ scene, x, y }) => {
       speed: 0.1,
       breakSpeed: 1,
       maxSpeed: 0.1 * 50,
+      maxHealth: 100,
       guncount: 1,
       gundelay: 20,
       gunspeed: 9,
@@ -39,6 +40,7 @@ export const Player = ({ scene, x, y }) => {
       gundamage: 5,
     },
   })
+
   let thrust = new Circle({
     width: 15,
     height: 15,
@@ -51,6 +53,9 @@ export const Player = ({ scene, x, y }) => {
     const upgrade = UPGRADES.find((u) => u.key === k)
     upgrade.apply(v, sprite)
   })
+
+  sprite.healthBar = true
+  sprite.maxHealth = sprite.stats.maxHealth
 
   const oldDamage = sprite.damage.bind(sprite)
   const damage = (n) => {
@@ -87,7 +92,7 @@ export const Player = ({ scene, x, y }) => {
     repair() {
       if (sprite.gold > 0) {
         pickup(-1)
-        damage(-sprite.maxHealth + sprite.health)
+        damage(-sprite.stats.maxHealth + sprite.health)
       }
     },
     shoot() {
@@ -149,7 +154,7 @@ export const Player = ({ scene, x, y }) => {
       if (sprite.health <= 0) {
         // TODO: need stronger death penalty.  Spawn at last base, lose gold
         setTimeout(() => {
-          sprite.health = sprite.maxHealth
+          sprite.health = sprite.stats.maxHealth
           sprite.ttl = Infinity
         }, 1000)
       }
