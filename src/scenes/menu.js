@@ -4,20 +4,20 @@ export const MenuScene = ({ canvas, onNew, onContinue }) => {
   const { width, height } = canvas
 
   let text = Text({
-    text: 'Space',
-    font: '150px Arial',
+    text: 'Star Exploder',
+    font: '110px sans-serif',
     color: '#555',
     x: width / 2,
-    y: height / 2 - 250,
+    y: height / 2 - 180,
     anchor: { x: 0.5, y: 0.5 },
     textAlign: 'center',
   })
   let text2 = Text({
     text: 'By Daniel Whiffing',
-    font: '24px Arial',
+    font: '24px sans-serif',
     color: '#333',
     x: width / 2,
-    y: height / 2,
+    y: height / 2 - 80,
     anchor: { x: 0.5, y: 0.5 },
     textAlign: 'center',
   })
@@ -27,7 +27,7 @@ export const MenuScene = ({ canvas, onNew, onContinue }) => {
     text: {
       text: 'New Game',
       color: 'white',
-      font: '40px Arial, sans-serif',
+      font: '40px sans-serif',
       textAlign: 'center',
       anchor: { x: 0.5, y: 0.5 },
     },
@@ -43,7 +43,7 @@ export const MenuScene = ({ canvas, onNew, onContinue }) => {
       text: {
         text: 'Continue',
         color: 'white',
-        font: '40px Arial, sans-serif',
+        font: '40px sans-serif',
         textAlign: 'center',
         anchor: { x: 0.5, y: 0.5 },
       },
