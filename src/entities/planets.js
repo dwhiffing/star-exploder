@@ -1,4 +1,4 @@
-import { getStoreItem, setStoreItem } from 'kontra'
+import { getStoreItem, randInt, setStoreItem } from 'kontra'
 import { COORDS, getDist, hashCode, gradient } from '../utils'
 import { drawHealthBar, Sprite } from './sprite'
 import { Pool } from './pool'
@@ -21,13 +21,18 @@ export const Planets = (scene, opts = {}) => {
           .filter((p) => p.width > 0 && p.color !== 'blue')
           .map((p) => ({ p, dist: getDist(p, scene.player.sprite) }))
           .sort((a, b) => a.dist - b.dist)[0]?.p
-        spawnTimer = 250
         if (planet) {
+          spawnTimer = 700 - level * 100
           const { x, y, level = 1 } = planet
           const maxSpawns = Math.floor(3 + level * 2)
-          const enemiesPerSpawn = Math.floor(1 + level / 2)
+          const enemiesPerSpawn = Math.floor(4 + level / 2)
           if (scene.enemies.pool.getAliveObjects().length < maxSpawns)
-            scene.enemies.spawn({ x, y, number: enemiesPerSpawn, level })
+            scene.enemies.spawn({
+              x,
+              y,
+              number: randInt(Math.floor(enemiesPerSpawn / 2), enemiesPerSpawn),
+              level,
+            })
         }
       }
 
