@@ -1,6 +1,5 @@
 import { keyPressed, Sprite, Text, track } from 'kontra'
 
-// TODO: should remove this or make it look nicer
 export const Inventory = (scene) => {
   const { width, height } = scene.context.canvas
   let active = false

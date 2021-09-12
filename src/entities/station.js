@@ -50,11 +50,6 @@ export const Station = (scene) => {
       if (this.active) return
 
       // TODO: take planet level into account
-      // TODO: not enough money should be red/faded
-      // TODO: render player gold here
-      // TODO: make upgrades look nicer
-      // TODO: 2 upgrades per station?
-      // TODO: only allow player to upgrade up to the station level + 1
       active = true
       scene.player.repair()
       text.text = `Money: ${scene.player.sprite.gold}`

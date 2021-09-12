@@ -23,7 +23,7 @@ export const Player = ({ scene, x: originX, y: originY }) => {
     color: '#666',
     width: 50,
     height: 50,
-    gold: getStoreItem('player')?.gold || 2000,
+    gold: getStoreItem('player')?.gold || 0,
     upgrades: upgrades,
     health: getStoreItem('player')?.health || 100,
     stats: {
