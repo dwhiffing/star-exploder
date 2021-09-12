@@ -100,8 +100,8 @@ export const UPGRADES = [
   {
     key: 'speed',
     label: 'Speed/manuvering',
-    max: 5,
-    getCost: baseGetCost(500, 3),
+    max: 4,
+    getCost: baseGetCost(500, 5),
     apply: (n, sprite) => {
       sprite.stats.speed = 0.1 + n * 0.005
       sprite.stats.maxSpeed = sprite.stats.speed * (50 * n)
@@ -111,8 +111,8 @@ export const UPGRADES = [
   {
     key: 'health',
     label: 'Max Health',
-    max: 10,
-    getCost: baseGetCost(100, 2),
+    max: 5,
+    getCost: baseGetCost(100, 2.5),
     apply: (n, sprite) => {
       sprite.stats.maxHealth = n * 100
       sprite.health = sprite.stats.maxHealth
@@ -122,28 +122,27 @@ export const UPGRADES = [
   {
     key: 'gunpower',
     label: 'Gun Power',
-    max: 9,
-    getCost: baseGetCost(200, 2),
+    max: 5,
+    getCost: baseGetCost(200, 4),
     apply: (n, sprite) => {
-      sprite.stats.gundamage = ((n + 1) / 3) * 3
-      sprite.stats.gunsize = 5 + n + 1
-      sprite.stats.gunspeed = ((n + 1) / 3) * 2.5
+      sprite.stats.gundamage = 5 + 10 * (n - 1)
+      sprite.stats.gunsize = 5 + n
     },
   },
   {
     key: 'gundelay',
     label: 'Gun Delay',
-    max: 9,
+    max: 5,
     getCost: baseGetCost(200, 2),
     apply: (n, sprite) => {
-      sprite.stats.gundelay = 5 + (28 - (n / 3) * 8)
+      sprite.stats.gundelay = 5 + (30 - n * 6)
     },
   },
   {
     key: 'guncount',
     label: 'Gun Bullets',
-    max: 5,
-    getCost: baseGetCost(200, 2),
+    max: 3,
+    getCost: baseGetCost(200, 5),
     apply: (n, sprite) => {
       sprite.stats.guncount = n * 1
       sprite.stats.gunspread = 0.15
