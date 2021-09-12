@@ -1,4 +1,4 @@
-import { angleToTarget, off, randInt } from 'kontra'
+import { angleToTarget } from 'kontra'
 import { Pool } from './pool'
 
 export const Bullets = (scene) => {

@@ -47,7 +47,7 @@ export const GameScene = ({ canvas }) => {
     if (!object) return
     const _player = player.sprite
     if (map.active) {
-      const stats = planetStats(object._x, object._y, seed)
+      const stats = planetStats(object._x, object._y, scene.seed)
       if (stats.health > 0) return
       playSound('shoot')
       _player.x = stats.x
@@ -106,7 +106,6 @@ export const GameScene = ({ canvas }) => {
         planets.getAliveObjects(),
         [player.sprite],
         (planet, player) => {
-          // player.damage(-1)
           planet.land()
         },
       )
@@ -121,6 +120,7 @@ export const GameScene = ({ canvas }) => {
       )
     },
     render() {
+      player.thrust.render()
       scene.render()
       hud.render()
       station.render()

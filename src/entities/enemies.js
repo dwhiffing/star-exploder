@@ -1,7 +1,7 @@
 import { angleToTarget, Pool, randInt } from 'kontra'
 import { getDist } from '../utils'
 import { Bullets } from './bullets'
-import { Sprite } from './sprite'
+import { ShipSprite } from './sprite'
 
 export const Enemies = (scene) => {
   const bullets = Bullets(scene)
@@ -20,8 +20,8 @@ export const Enemies = (scene) => {
           x,
           y,
           anchor: { x: 0.5, y: 0.5 },
-          width: 30,
-          height: 30,
+          width: 20,
+          height: 20,
           health: 5 * level,
           strength: 1 * level,
           speed: 1 + 0.1 * level,
@@ -48,7 +48,7 @@ export const Enemies = (scene) => {
 
 const ENEMY_COUNT = 20
 
-class Enemy extends Sprite {
+class Enemy extends ShipSprite {
   constructor(properties) {
     super(properties)
     this.bulletTimer = 0

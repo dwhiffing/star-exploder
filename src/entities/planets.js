@@ -1,5 +1,5 @@
 import { getStoreItem, setStoreItem } from 'kontra'
-import { COORDS, getDist, hashCode, mkGradient } from '../utils'
+import { COORDS, getDist, hashCode, gradient } from '../utils'
 import { Sprite } from './sprite'
 import { Pool } from './pool'
 
@@ -135,7 +135,10 @@ export class Planet extends Sprite {
 
   render() {
     if (this.size < 10) return
-    const opts = {
+
+    var pad = 1.25
+    const canvas = mkStar({
+      pad,
       r: this.size / 2,
       o1: this.color === 'red' ? '#FFF500' : '#3551dc',
       o2: this.color === 'red' ? '#FFE300' : '#0453d2',
@@ -143,54 +146,7 @@ export class Planet extends Sprite {
       c3: this.color === 'red' ? '#FFAF00' : '#0051af',
       h1: this.color === 'red' ? 'rgba(255,122,0,1)' : 'rgba(0,81,175,1)',
       h2: this.color === 'red' ? 'rgba(255,12,0,0)' : 'rgba(0,81,175,0)',
-    }
-
-    var pad = 1.25
-    var canvas = document.createElement('canvas')
-    canvas.width = opts.r * (pad * 2)
-    canvas.height = opts.r * (pad * 2)
-    var ctx = canvas.getContext('2d')
-
-    // Halo
-    mkGradient({
-      ctx: ctx,
-      r1: opts.r,
-      r2: opts.r * pad,
-      c1: opts.h1,
-      c2: opts.h2,
     })
-
-    // // Translate to edge of halo.
-    var offset = opts.r * pad - opts.r
-    ctx.translate(offset, offset)
-    ctx.save()
-
-    /// Create planet outline clip
-    ctx.beginPath()
-    ctx.arc(opts.r, opts.r, opts.r, 0, 2 * Math.PI)
-    ctx.closePath()
-    ctx.clip()
-
-    // Fill the ocean
-    mkGradient({
-      ctx: ctx,
-      r1: 0,
-      r2: opts.r,
-      c1: opts.o2,
-      c2: opts.o1,
-    })
-
-    // Add some atmosphere
-    ctx.globalAlpha = 1
-    mkGradient({
-      ctx: ctx,
-      r1: opts.r / 1.1,
-      r2: opts.r,
-      c1: 'rgba(255,255,255,0)',
-      c2: 'rgba(255,255,255,.3)',
-    })
-
-    ctx.restore()
 
     this.context.drawImage(
       canvas,
@@ -198,4 +154,54 @@ export class Planet extends Sprite {
       this.y - (this.size / 2) * pad,
     )
   }
+}
+
+const mkStar = (opts) => {
+  var canvas = document.createElement('canvas')
+  canvas.width = opts.r * (opts.pad * 2)
+  canvas.height = opts.r * (opts.pad * 2)
+  var ctx = canvas.getContext('2d')
+
+  // Halo
+  gradient({
+    ctx: ctx,
+    r1: opts.r,
+    r2: opts.r * opts.pad,
+    c1: opts.h1,
+    c2: opts.h2,
+  })
+
+  // // Translate to edge of halo.
+  var offset = opts.r * opts.pad - opts.r
+  ctx.translate(offset, offset)
+  ctx.save()
+
+  /// Create planet outline clip
+  ctx.beginPath()
+  ctx.arc(opts.r, opts.r, opts.r, 0, 2 * Math.PI)
+  ctx.closePath()
+  ctx.clip()
+
+  // Fill the ocean
+  gradient({
+    ctx: ctx,
+    r1: 0,
+    r2: opts.r,
+    c1: opts.o2,
+    c2: opts.o1,
+  })
+
+  // Add some atmosphere
+  ctx.globalAlpha = 1
+  gradient({
+    ctx: ctx,
+    r1: opts.r / 1.1,
+    r2: opts.r,
+    c1: 'rgba(255,255,255,0)',
+    c2: 'rgba(255,255,255,.3)',
+  })
+
+  ctx.restore()
+
+  return canvas
 }

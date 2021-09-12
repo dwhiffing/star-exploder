@@ -24,6 +24,7 @@ export const Hud = (scene) => {
     anchor: { x: 0.5, y: 0.5 },
     textAlign: 'center',
   })
+
   return {
     shutdown() {},
     update() {
@@ -38,6 +39,7 @@ export const Hud = (scene) => {
         arrows[i].width = 13 * mult
         arrows[i].height = 6 * mult
       })
+
       health.text = `${scene.player.sprite.health}`
     },
     render() {
@@ -47,7 +49,7 @@ export const Hud = (scene) => {
   }
 }
 
-class Triangle extends GameObject.class {
+export class Triangle extends GameObject.class {
   constructor(properties) {
     super(properties)
   }

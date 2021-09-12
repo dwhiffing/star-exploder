@@ -5,9 +5,10 @@ import {
   pointerPressed,
   setStoreItem,
 } from 'kontra'
-import { Sprite } from './sprite'
+import { ShipSprite } from './sprite'
 import { Bullets } from './bullets'
 import { UPGRADES } from './station'
+import { Triangle } from './hud'
 
 export const Player = ({ scene, x, y }) => {
   const upgrades = getStoreItem('player')?.upgrades || {}
@@ -16,11 +17,11 @@ export const Player = ({ scene, x, y }) => {
   const bullets = Bullets(scene)
   const { width, height } = scene.context.canvas
   const lastPlanet = getStoreItem('last-planet')
-  let sprite = new Sprite({
+  let sprite = new ShipSprite({
     x: lastPlanet?.x || x,
     y: lastPlanet?.y || y,
     anchor: { x: 0.5, y: 0.5 },
-    color: 'blue',
+    color: '#666',
     width: 30,
     height: 30,
     gold: getStoreItem('player')?.gold || 0,
@@ -39,6 +40,15 @@ export const Player = ({ scene, x, y }) => {
       gunspread: 0,
       gundamage: 10,
     },
+  })
+  let thrust = new Triangle({
+    x: 400,
+    y: 400,
+    color: 'white',
+    anchor: { x: 0.5, y: 0.5 },
+    rotation: 1.57 * 0,
+    width: 15,
+    height: 15,
   })
 
   Object.entries(upgrades).forEach(([k, v]) => {
@@ -75,6 +85,7 @@ export const Player = ({ scene, x, y }) => {
 
   return {
     sprite,
+    thrust,
     bullets,
     shutdown() {},
     repair() {
@@ -83,20 +94,51 @@ export const Player = ({ scene, x, y }) => {
         damage(-sprite.stats.maxHealth + sprite.health)
       }
     },
+    shoot() {
+      bulletTimer = sprite.stats.gundelay
+      const pointer = getPointer()
+      const x = sprite.x - width / 2 + pointer.x
+      const y = sprite.y - height / 2 + pointer.y
+      const size = sprite.stats.gunsize
+      const color = sprite.stats.guncolor
+      const speed = sprite.stats.gunspeed
+      const spread = sprite.stats.gunspread
+      const damage = sprite.stats.gundamage
+      const count = sprite.stats.guncount
+      for (let i = 0; i < count; i++) {
+        bullets.get(
+          sprite,
+          { x, y },
+          { size, color, speed, spread, damage, index: i, count },
+        )
+      }
+    },
+    move(dir) {
+      thrust.scaleX = 1
+      thrust.rotation = 1.57 * dir
+      thrust.x = 400 + (dir === 0 || dir === 2 ? 0 : dir === 1 ? -35 : 35)
+      thrust.y = 400 + (dir === 1 || dir === 3 ? 0 : dir === 2 ? -35 : 35)
+    },
     update() {
       sprite.ddx = 0
       sprite.ddy = 0
       const { speed, maxSpeed, breakSpeed } = sprite.stats
+      thrust.scaleX = 0
+
       if (keyPressed('up') || keyPressed('w')) {
+        this.move(0)
         if (sprite.dy > -maxSpeed) sprite.ddy = -speed
       }
       if (keyPressed('down') || keyPressed('s')) {
+        this.move(2)
         if (sprite.dy < maxSpeed) sprite.ddy = speed
       }
       if (keyPressed('left') || keyPressed('a')) {
+        this.move(3)
         if (sprite.dx > -maxSpeed) sprite.ddx = -speed
       }
       if (keyPressed('right') || keyPressed('d')) {
+        this.move(1)
         if (sprite.dx < maxSpeed) sprite.ddx = speed
       }
       if (keyPressed('space')) {
@@ -110,6 +152,7 @@ export const Player = ({ scene, x, y }) => {
       bullets.update()
 
       if (sprite.health <= 0) {
+        // TODO: need stronger death penalty.  Spawn at last base, lose gold
         setTimeout(() => {
           sprite.health = sprite.stats.maxHealth
           sprite.ttl = Infinity
@@ -118,27 +161,8 @@ export const Player = ({ scene, x, y }) => {
 
       if (bulletTimer > 0) bulletTimer--
       if (pointerPressed('left') && bulletTimer <= 0 && !scene.station.active) {
-        bulletTimer = sprite.stats.gundelay
-        const pointer = getPointer()
-        const x = sprite.x - width / 2 + pointer.x
-        const y = sprite.y - height / 2 + pointer.y
-        const size = sprite.stats.gunsize
-        const color = sprite.stats.guncolor
-        const speed = sprite.stats.gunspeed
-        const spread = sprite.stats.gunspread
-        const damage = sprite.stats.gundamage
-        const count = sprite.stats.guncount
-        for (let i = 0; i < count; i++) {
-          bullets.get(
-            sprite,
-            { x, y },
-            { size, color, speed, spread, damage, index: i, count },
-          )
-        }
+        this.shoot()
       }
-    },
-    render() {
-      sprite.render()
     },
   }
 }
