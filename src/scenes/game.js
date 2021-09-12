@@ -60,6 +60,7 @@ export const GameScene = ({ canvas }) => {
         if (currentLevel >= object.upgrade.max) return
         const level = currentLevel + 1
         _player.setUpgrade(object.upgrade, level)
+        // TODO: ensure can afford
         // _player.setGold(_player.gold - object.upgrade.getCost(level))
       }
     }

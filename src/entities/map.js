@@ -99,10 +99,10 @@ export const GameMap = (scene) => {
           const thing = { x: p._x * f + 400, y: p._y * f + 400 }
           const dist = getDist(thing, sprite)
           const angle = angleToTarget(thing, sprite) - 1.57
-          return { ...p, dist, angle }
+          return { ...p, dist, angle, ...thing }
         })
+        .filter((p) => p.dist < 50000)
         .sort((a, b) => a.dist - b.dist)
-        .slice(0, 4)
     },
     shutdown() {},
     update() {

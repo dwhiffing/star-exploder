@@ -102,14 +102,19 @@ export const Station = (scene) => {
   }
 }
 
+const baseGetCost =
+  (baseCost = 10, rate = 1.4) =>
+  (n) =>
+    Math.round((baseCost * (Math.pow(rate, n + 1) - Math.pow(rate, n))) / rate)
+
 export const UPGRADES = [
   {
     key: 'speed',
     label: 'Speed/manuvering',
-    max: 3,
-    getCost: (n) => n * 1,
+    max: 5,
+    getCost: baseGetCost(500, 3),
     apply: (n, sprite) => {
-      sprite.stats.speed = 0.1 + (n + 1) * 0.01
+      sprite.stats.speed = 0.1 + n * 0.005
       sprite.stats.maxSpeed = sprite.stats.speed * (50 * n)
       sprite.stats.breakSpeed = n
     },
@@ -117,49 +122,41 @@ export const UPGRADES = [
   {
     key: 'health',
     label: 'Max Health',
-    max: 3,
-    getCost: (n) => n * 1,
+    max: 10,
+    getCost: baseGetCost(100, 2),
     apply: (n, sprite) => {
-      sprite.stats.health = (n + 1) * 100
-      sprite.stats.maxHealth = (n + 1) * 100
+      sprite.stats.maxHealth = n * 100
+      sprite.health = sprite.stats.maxHealth
     },
   },
   {
     key: 'gunpower',
     label: 'Gun Power',
-    max: 3,
-    getCost: (n) => n * 1,
+    max: 9,
+    getCost: baseGetCost(200, 2),
     apply: (n, sprite) => {
-      sprite.stats.gundamage = (n + 1) * 3
-      sprite.stats.gunsize = (n + 1) * 3
-    },
-  },
-  {
-    key: 'gunspeed',
-    label: 'Gun Speed',
-    max: 3,
-    getCost: (n) => n * 1,
-    apply: (n, sprite) => {
-      sprite.stats.gunspeed = (n + 1) * 2.5
+      sprite.stats.gundamage = ((n + 1) / 3) * 3
+      sprite.stats.gunsize = 5 + n + 1
+      sprite.stats.gunspeed = ((n + 1) / 3) * 2.5
     },
   },
   {
     key: 'gundelay',
     label: 'Gun Delay',
-    max: 3,
-    getCost: (n) => n * 1,
+    max: 9,
+    getCost: baseGetCost(200, 2),
     apply: (n, sprite) => {
-      sprite.stats.gundelay = 5 + (30 - n * 8)
+      sprite.stats.gundelay = 5 + (28 - (n / 3) * 8)
     },
   },
   {
     key: 'guncount',
     label: 'Gun Bullets',
-    max: 3,
-    getCost: (n) => n * 1,
+    max: 5,
+    getCost: baseGetCost(200, 2),
     apply: (n, sprite) => {
-      sprite.stats.guncount = (n + 1) * 1
-      sprite.stats.gunspread = 0.2
+      sprite.stats.guncount = n * 1
+      sprite.stats.gunspread = 0.15
     },
   },
 ]

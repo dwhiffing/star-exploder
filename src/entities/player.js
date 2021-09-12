@@ -34,7 +34,7 @@ export const Player = ({ scene, x, y }) => {
       guncount: 1,
       gundelay: 30,
       gunspeed: 5,
-      gunsize: 10,
+      gunsize: 5,
       guncolor: 'yellow',
       gunspread: 0,
       gundamage: 10,
@@ -117,11 +117,7 @@ export const Player = ({ scene, x, y }) => {
       }
 
       if (bulletTimer > 0) bulletTimer--
-      if (
-        pointerPressed('left') &&
-        bulletTimer === 0 &&
-        !scene.station.active
-      ) {
+      if (pointerPressed('left') && bulletTimer <= 0 && !scene.station.active) {
         bulletTimer = sprite.stats.gundelay
         const pointer = getPointer()
         const x = sprite.x - width / 2 + pointer.x
@@ -131,8 +127,13 @@ export const Player = ({ scene, x, y }) => {
         const speed = sprite.stats.gunspeed
         const spread = sprite.stats.gunspread
         const damage = sprite.stats.gundamage
-        for (let i = 0; i < sprite.stats.guncount; i++) {
-          bullets.get(sprite, { x, y }, { size, color, speed, spread, damage })
+        const count = sprite.stats.guncount
+        for (let i = 0; i < count; i++) {
+          bullets.get(
+            sprite,
+            { x, y },
+            { size, color, speed, spread, damage, index: i, count },
+          )
         }
       }
     },

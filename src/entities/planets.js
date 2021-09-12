@@ -44,7 +44,6 @@ export const Planets = (scene, opts = {}) => {
         for (let k in stats) {
           planet[k] = stats[k]
         }
-        if (stats.isPlanet) console.log(stats)
       })
     },
   })

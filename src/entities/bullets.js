@@ -1,4 +1,4 @@
-import { angleToTarget, randInt } from 'kontra'
+import { angleToTarget, off, randInt } from 'kontra'
 import { Pool } from './pool'
 
 export const Bullets = (scene) => {
@@ -10,12 +10,14 @@ export const Bullets = (scene) => {
         size = 5,
         color = 'yellow',
         speed = 8,
-        spread = 0.01,
+        count = 1,
         damage = 1,
+        spread = 0,
+        index = 0,
       } = opts
-      const angle =
-        angleToTarget(start, target) - 1.57 + randInt(-1, 1) * spread
-      const _speed = speed + randInt(-1, 1)
+
+      const offset = index * spread - spread * (count / 2)
+      const angle = angleToTarget(start, target) - 1.57 + offset
       return {
         x,
         y,
@@ -24,8 +26,8 @@ export const Bullets = (scene) => {
         anchor: { x: 0.5, y: 0.5 },
         width: size,
         height: size,
-        dx: dx + _speed * Math.cos(angle),
-        dy: dy + _speed * Math.sin(angle),
+        dx: dx + speed * Math.cos(angle),
+        dy: dy + speed * Math.sin(angle),
         ttl: 150,
       }
     },
