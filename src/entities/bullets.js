@@ -33,7 +33,7 @@ export const Bullets = (scene) => {
         height: size,
         dx: dx + speed * Math.cos(angle),
         dy: dy + speed * Math.sin(angle),
-        ttl: 150,
+        ttl: 200,
       }
     },
   })

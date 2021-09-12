@@ -30,14 +30,13 @@ export const Player = ({ scene, x, y }) => {
       speed: 0.1,
       breakSpeed: 1,
       maxSpeed: 0.1 * 50,
-      maxHealth: 100,
       guncount: 1,
-      gundelay: 30,
-      gunspeed: 8,
+      gundelay: 20,
+      gunspeed: 9,
       gunsize: 5,
       guncolor: 'white',
       gunspread: 0,
-      gundamage: 10,
+      gundamage: 5,
     },
   })
   let thrust = new Circle({
@@ -88,7 +87,7 @@ export const Player = ({ scene, x, y }) => {
     repair() {
       if (sprite.gold > 0) {
         pickup(-1)
-        damage(-sprite.stats.maxHealth + sprite.health)
+        damage(-sprite.maxHealth + sprite.health)
       }
     },
     shoot() {
@@ -150,7 +149,7 @@ export const Player = ({ scene, x, y }) => {
       if (sprite.health <= 0) {
         // TODO: need stronger death penalty.  Spawn at last base, lose gold
         setTimeout(() => {
-          sprite.health = sprite.stats.maxHealth
+          sprite.health = sprite.maxHealth
           sprite.ttl = Infinity
         }, 1000)
       }

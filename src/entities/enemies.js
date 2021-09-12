@@ -15,6 +15,7 @@ export const Enemies = (scene) => {
     bullets,
     spawn({ x, y, number = 1, level = 1 }) {
       for (let i = 0; i < number; i++) {
+        const health = 10 * level + randInt(0, 10 * level)
         const enemy = pool.get({
           x,
           y,
@@ -22,7 +23,9 @@ export const Enemies = (scene) => {
           width: 35,
           height: 35,
           level,
-          health: 10 * level + randInt(0, 10 * level),
+          healthBar: true,
+          health,
+          maxHealth: health,
           strength: 1 * level,
           speed: 1 + 0.1 * level,
           color: 'red',
@@ -77,22 +80,25 @@ class Enemy extends ShipSprite {
     }
 
     if (!this.target) {
-      this.target = this.getNewTarget(400)
+      this.target = this.getNewTarget(200)
+      const distToTarget = getDist(this, this.target)
+      const angle = angleToTarget(this, this.target) - 1.57
+      const speed =
+        distToTarget <= 200 || getDist(this, this.scene.player.sprite) < 100
+          ? 0
+          : this.speed
+      this.ddy = (speed / 20) * Math.sin(angle)
+      this.ddx = (speed / 20) * Math.cos(angle)
     }
-    const distToTarget = getDist(this, this.target)
-    const angle = angleToTarget(this, this.target) - 1.57
-    const speed =
-      distToTarget <= 200 || getDist(this, this.scene.player.sprite) < 100
-        ? 0
-        : this.speed
-    this.dy = speed * Math.sin(angle)
-    this.dx = speed * Math.cos(angle)
+    this.dx *= 0.98
+    this.dy *= 0.98
 
+    const distToTarget = getDist(this, this.target)
     if (distToTarget <= 200) {
       if (this.triggered) return
       setTimeout(() => {
         this.triggered = false
-        this.target = this.getNewTarget(400)
+        this.target = null
       }, randInt(500, 1500))
       this.triggered = true
     }

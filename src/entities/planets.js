@@ -1,9 +1,9 @@
 import { getStoreItem, setStoreItem } from 'kontra'
 import { COORDS, getDist, hashCode, gradient } from '../utils'
-import { Sprite } from './sprite'
+import { drawHealthBar, Sprite } from './sprite'
 import { Pool } from './pool'
 
-const SPAWN_TIME = 200
+const SPAWN_TIME = 100
 const PLANET_HEALTH = 50
 
 export const Planets = (scene, opts = {}) => {
@@ -21,7 +21,7 @@ export const Planets = (scene, opts = {}) => {
       if (spawnTimer > 0) spawnTimer--
       else if (spawnTimer <= 0) {
         const planet = pool.objects
-          .filter((p) => p.width > 0 && true) // p.color !== 'blue')
+          .filter((p) => p.width > 0 && p.color !== 'blue')
           .map((p) => ({ p, dist: getDist(p, scene.player.sprite) }))
           .sort((a, b) => a.dist - b.dist)[0]?.p
         if (planet) {
@@ -97,6 +97,7 @@ export const planetStats = (
     size: isPlanet ? size : 0,
     isPlanet,
     health,
+    maxHealth: health,
     level,
     upgradeType,
     width: isPlanet ? size : 0,
@@ -109,6 +110,9 @@ export const planetStats = (
 export const PLANET_CHUNK_FACTOR = 1
 
 export class Planet extends Sprite {
+  constructor(properties) {
+    super(properties)
+  }
   damage(n) {
     if (this.health <= 0) return
     super.damage(n)
@@ -133,8 +137,16 @@ export class Planet extends Sprite {
   }
 
   render() {
-    if (this.size < 10) return
-
+    if (this.size < 5) return
+    if (this.health > 0) {
+      drawHealthBar({
+        ctx: this.context,
+        x: this.x - this.width / 2,
+        y: this.y - this.height / 1.5,
+        width: this.width,
+        ratio: this.health / this.maxHealth,
+      })
+    }
     var pad = 1.25
     const canvas = mkStar({
       pad,

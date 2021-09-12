@@ -125,8 +125,8 @@ export const UPGRADES = [
     max: 10,
     getCost: baseGetCost(100, 2),
     apply: (n, sprite) => {
-      sprite.stats.maxHealth = n * 100
-      sprite.health = sprite.stats.maxHealth
+      sprite.maxHealth = n * 100
+      sprite.health = sprite.maxHealth
     },
   },
   {

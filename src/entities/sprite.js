@@ -4,6 +4,8 @@ import { gradient } from '../utils'
 export class Sprite extends BaseSprite.class {
   constructor(properties) {
     super(properties)
+    this.maxHealth = properties?.maxHealth || this.health
+    this.health = this.maxHealth
   }
 
   damage(n) {
@@ -22,6 +24,26 @@ export class Sprite extends BaseSprite.class {
     super.update()
     this.opacity = this.isAlive() ? 1 : 0
   }
+
+  render() {
+    super.render()
+    if (this.healthBar && this.health > 0) {
+      drawHealthBar({
+        ctx: this.context,
+        x: this.x - this.width / 2,
+        y: this.y - this.height,
+        width: this.width,
+        ratio: this.health / this.maxHealth,
+      })
+    }
+  }
+}
+
+export const drawHealthBar = ({ ctx, x, y, width, height = 5, ratio }) => {
+  ctx.fillStyle = '#ff0000'
+  ctx.fillRect(x, y, width, height)
+  ctx.fillStyle = '#00ff00'
+  ctx.fillRect(x, y, width * ratio, height)
 }
 
 export class ShipSprite extends Sprite {
