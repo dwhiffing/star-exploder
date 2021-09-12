@@ -25,7 +25,7 @@ export const Planets = (scene, opts = {}) => {
         if (planet) {
           const { x, y, level = 1 } = planet
           const maxSpawns = Math.floor(3 + level * 2)
-          const enemiesPerSpawn = Math.floor(2.5 + level / 2)
+          const enemiesPerSpawn = Math.floor(1 + level)
           if (scene.enemies.pool.getAliveObjects().length < maxSpawns) {
             spawnTimer = 700 - level * 100
             scene.enemies.spawn({
@@ -98,9 +98,6 @@ export const planetStats = (
     if (typeof index !== 'number' && health < maxHealth) {
       const store = getStoreItem('planets') || {}
       index = Object.keys(store).length - 1
-      if (index >= 1) {
-        startMenu()
-      }
       setStoreItem('planets', {
         ...store,
         [`${_x}-${_y}`]: { ...item, index },
@@ -166,6 +163,10 @@ export class Planet extends Sprite {
         })
       }, i * 10)
     }
+
+    const store = getStoreItem('planets') || {}
+    const numCaptured = Object.values(store).filter((p) => p.health <= 0).length
+    if (numCaptured >= 20) this.parent.onWin()
     this.color = 'blue'
   }
 

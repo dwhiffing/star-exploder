@@ -1,6 +1,5 @@
 import { onPointerDown, Scene } from 'kontra'
 import {
-  // Inventory,
   Station,
   Enemies,
   Pickups,
@@ -14,7 +13,7 @@ import { planetStats } from '../entities/planets'
 import { checkCollisions, getSeed } from '../utils'
 import '../../lib/zzfx'
 
-export const GameScene = ({ canvas }) => {
+export const GameScene = ({ canvas, onWin }) => {
   let scene = Scene({ id: 'game' })
   scene.seed = getSeed()
   let stars = Stars(scene)
@@ -32,7 +31,6 @@ export const GameScene = ({ canvas }) => {
 
   let enemies = Enemies(scene)
   let pickups = Pickups(scene)
-  // let inventory = Inventory(scene)
   let station = Station(scene)
 
   scene.player = player
@@ -42,6 +40,7 @@ export const GameScene = ({ canvas }) => {
   scene.station = station
   scene.map = map
   scene.hud = hud
+  scene.onWin = onWin
 
   onPointerDown((e, object) => {
     if (!object) return
@@ -74,7 +73,6 @@ export const GameScene = ({ canvas }) => {
       planets.update(scene.camera.x, scene.camera.y)
       enemies.update()
       pickups.update()
-      // inventory.update()
       station.update()
       map.update()
       hud.update()
@@ -127,7 +125,6 @@ export const GameScene = ({ canvas }) => {
       scene.render()
       hud.render()
       station.render()
-      // inventory.render()
       map.render()
     },
   }

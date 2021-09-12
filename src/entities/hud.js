@@ -15,6 +15,7 @@ export const Hud = (scene) => {
 
     arrows.push(arrow)
   }
+  // TODO: fix arrows when planet too far away
   let money = Text({
     text: '',
     font: '14px Arial',
