@@ -15,7 +15,7 @@ export const Enemies = (scene) => {
     bullets,
     spawn({ x, y, number = 1, level = 1 }) {
       for (let i = 0; i < number; i++) {
-        const health = 10 * level + randInt(0, 10 * level)
+        const health = 10 + Math.pow(4, level)
         setTimeout(() => {
           const enemy = pool.get({
             x,
@@ -69,7 +69,7 @@ class Enemy extends ShipSprite {
     this.scene.pickups.get({
       x: this.x,
       y: this.y,
-      value: randInt(3, 10) * this.level * multi,
+      value: randInt(10, 30) * this.level * multi,
     })
   }
 

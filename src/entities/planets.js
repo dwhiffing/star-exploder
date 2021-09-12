@@ -25,7 +25,7 @@ export const Planets = (scene, opts = {}) => {
           const { x, y, level = 1 } = planet
           spawnTimer = 700 - level * 100
           const maxSpawns = Math.floor(3 + level * 2)
-          const enemiesPerSpawn = Math.floor(4 + level / 2)
+          const enemiesPerSpawn = Math.floor(3 + level / 2)
           if (scene.enemies.pool.getAliveObjects().length < maxSpawns)
             scene.enemies.spawn({
               x,
@@ -68,6 +68,7 @@ export const planetStats = (
   const y = _y * chunkSize + chunkSize / 2
   const isPlanet = hashCode(`${seedBase}planet`) % 223 === 0
   let health = 0
+  let maxHealth = 0
   let upgradeType = 0
   let color = null
   let level = 0
@@ -82,12 +83,13 @@ export const planetStats = (
       { x: realX, y: realY },
       { x: 34800, y: 34800 },
     )
-    level = Math.floor(distanceToCenter / 30000) + 1
+    level = Math.min(5, Math.floor(distanceToCenter / 30000) + 1)
+
     size = 200 + 50 * level
     const item = store[`${_x}-${_y}`] || {}
     health = item?.health
     index = item?.index
-    const maxHealth = 200 * level
+    maxHealth = 90 + Math.pow(10, level)
     health = typeof health === 'number' ? health : maxHealth
     color = health > 0 ? COLORS[level - 1] : 'blue'
     if (typeof index !== 'number' && health < maxHealth) {
@@ -109,7 +111,7 @@ export const planetStats = (
     size: isPlanet ? size : 0,
     isPlanet,
     health,
-    maxHealth: 200 * level,
+    maxHealth,
     level,
     upgradeType,
     width: isPlanet ? size : 0,
@@ -148,13 +150,13 @@ export class Planet extends Sprite {
   }
   die() {
     this.health = 0
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < this.level * 20; i++) {
       const multi = randInt(0, 5) === 0 ? 2 : 1
       setTimeout(() => {
         this.parent.pickups.get({
           x: this.x + randInt(-100, 100),
           y: this.y + randInt(-100, 100),
-          value: randInt(1, 6) * this.level * multi,
+          value: randInt(6, 10) * this.level * multi,
         })
       }, i * 10)
     }
@@ -177,12 +179,12 @@ export class Planet extends Sprite {
     const canvas = mkStar({
       pad,
       r: this.size / 2,
-      o1: this.color === 'red' ? '#FFF500' : '#3551dc',
-      o2: this.color === 'red' ? '#FFE300' : '#0453d2',
-      c2: this.color === 'red' ? '#FFC700' : '#0f52b4',
-      c3: this.color === 'red' ? '#FFAF00' : '#0051af',
-      h1: this.color === 'red' ? 'rgba(255,122,0,1)' : 'rgba(0,81,175,1)',
-      h2: this.color === 'red' ? 'rgba(255,12,0,0)' : 'rgba(0,81,175,0)',
+      o1: this.color !== 'blue' ? '#FFF500' : '#3551dc',
+      o2: this.color !== 'blue' ? '#FFE300' : '#0453d2',
+      c2: this.color !== 'blue' ? '#FFC700' : '#0f52b4',
+      c3: this.color !== 'blue' ? '#FFAF00' : '#0051af',
+      h1: this.color !== 'blue' ? 'rgba(255,122,0,1)' : 'rgba(0,81,175,1)',
+      h2: this.color !== 'blue' ? 'rgba(255,12,0,0)' : 'rgba(0,81,175,0)',
     })
 
     this.context.drawImage(

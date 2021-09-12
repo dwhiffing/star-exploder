@@ -49,7 +49,6 @@ export const Station = (scene) => {
     open(planet) {
       if (this.active) return
 
-      // TODO: take planet level into account
       active = true
       scene.player.repair()
       text.text = `Money: ${scene.player.sprite.gold}`
@@ -66,7 +65,7 @@ export const Station = (scene) => {
           return
         }
         const cost = upgrade.getCost(playerLevel + 1)
-        if (scene.player.sprite.gold < cost) upgradeSlots[index].opacity = 0.5
+        upgradeSlots[index].opacity = scene.player.sprite.gold < cost ? 0.5 : 1
         upgradeSlots[index].text =
           'Upgrade: ' +
           '\n' +
@@ -122,20 +121,20 @@ export const UPGRADES = shuffle([
   {
     key: 'gunpower',
     label: 'Gun Power',
-    max: 5,
-    getCost: baseGetCost(200, 4),
+    max: 6,
+    getCost: baseGetCost(200, 3),
     apply: (n, sprite) => {
-      sprite.stats.gundamage = 5 + 10 * (n - 1)
+      sprite.stats.gundamage = 7 * n
       sprite.stats.gunsize = 5 + n
     },
   },
   {
     key: 'gundelay',
     label: 'Gun Delay',
-    max: 5,
-    getCost: baseGetCost(200, 2),
+    max: 4,
+    getCost: baseGetCost(200, 4),
     apply: (n, sprite) => {
-      sprite.stats.gundelay = 5 + (30 - n * 6)
+      sprite.stats.gundelay = 5 + (30 - n * 7)
     },
   },
   {
