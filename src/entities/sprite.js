@@ -32,14 +32,16 @@ export class ShipSprite extends Sprite {
 
   draw() {
     this.strobeTimer--
-    const pad = 1.2 + (this.strobeTimer <= 5 ? 0.25 : 0.2)
+    const w = this.width * 0.6
+    const pad = 1.25 + (this.strobeTimer <= 5 ? 0.08 : 0.05)
     if (this.strobeTimer <= 0) this.strobeTimer = 10
+    const o = this.width / 2
     gradient({
-      x: 15 + -this.width * pad,
-      y: 15 + -this.width * pad,
+      x: o + -w * pad,
+      y: o + -w * pad,
       ctx: this.context,
-      r1: this.width * 0.5,
-      r2: this.width * pad,
+      r1: w * 0.5,
+      r2: w * pad,
       c1: 'rgba(170,170,255,1)',
       c2: 'rgba(170,170,255,0)',
     })
@@ -47,13 +49,13 @@ export class ShipSprite extends Sprite {
     this.context.lineWidth = 3
     this.context.strokeStyle = '#222'
     this.context.beginPath()
-    this.context.arc(15, 15, this.width, 0, 2 * Math.PI)
+    this.context.arc(o, o, w, 0, 2 * Math.PI)
     this.context.closePath()
     this.context.stroke()
     this.context.fill()
     this.context.beginPath()
     this.context.fillStyle = '#111'
-    this.context.arc(15, 15, this.width / 2, 0, 2 * Math.PI)
+    this.context.arc(o, o, w / 2, 0, 2 * Math.PI)
     this.context.fill()
     this.context.lineWidth = 1
     this.context.strokeStyle = '#555'

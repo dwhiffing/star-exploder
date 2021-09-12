@@ -1,14 +1,15 @@
+import { Circle } from './bullets'
 import { Pool } from './pool'
 
 export const Pickups = (scene, opts = {}) => {
-  const { size = 15 } = opts
+  const { size = 10 } = opts
   return new Pool(scene, {
+    // autoInit: true,
+    create: (...args) => new Circle(...args),
     get({ x, y }) {
       return {
         x,
         y,
-        color: 'yellow',
-        anchor: { x: 0.5, y: 0.5 },
         width: size,
         height: size,
       }

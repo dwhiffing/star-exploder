@@ -3,7 +3,7 @@ import { COORDS, getDist, hashCode, gradient } from '../utils'
 import { Sprite } from './sprite'
 import { Pool } from './pool'
 
-const SPAWN_TIME = 500
+const SPAWN_TIME = 200
 const PLANET_HEALTH = 50
 
 export const Planets = (scene, opts = {}) => {
@@ -19,15 +19,17 @@ export const Planets = (scene, opts = {}) => {
       const chunkY = Math.floor(y / chunkSize)
 
       if (spawnTimer > 0) spawnTimer--
-      else if (spawnTimer === 0) {
-        const sorted = pool.objects
-          .filter((p) => p.width > 0 && p.color !== 'blue')
+      else if (spawnTimer <= 0) {
+        const planet = pool.objects
+          .filter((p) => p.width > 0 && true) // p.color !== 'blue')
           .map((p) => ({ p, dist: getDist(p, scene.player.sprite) }))
-          .sort((a, b) => a.dist - b.dist)
-        if (sorted[0]) {
-          const { x, y, level = 1 } = sorted[0].p
-          scene.enemies.spawn({ x, y, level })
-          spawnTimer = SPAWN_TIME - level * 25
+          .sort((a, b) => a.dist - b.dist)[0]?.p
+        if (planet) {
+          const { x, y, level = 1 } = planet
+          const maxSpawns = Math.floor(2 + level * 1.5)
+          if (scene.enemies.pool.getAliveObjects().length < maxSpawns)
+            scene.enemies.spawn({ x, y, level })
+          spawnTimer = SPAWN_TIME
         } else {
           spawnTimer = SPAWN_TIME
         }
@@ -50,9 +52,6 @@ export const Planets = (scene, opts = {}) => {
   return pool
 }
 
-// TODO: should assign a level to a planet based on distance from origin
-// level will scale planet health, items for sale, enemy spawn rate, and enemy level
-// enemy level will determine speed, health, and damage
 const statsCache = {}
 export const planetStats = (
   _x,
@@ -87,7 +86,7 @@ export const planetStats = (
     size = 200 + 50 * level
     health = store[`${_x}-${_y}`]?.health
     health = typeof health === 'number' ? health : PLANET_HEALTH * level
-    color = health > 0 ? 'red' : 'blue'
+    color = health > 0 ? COLORS[level - 1] : 'blue'
   }
   const final = {
     _x,
@@ -205,3 +204,5 @@ const mkStar = (opts) => {
 
   return canvas
 }
+
+const COLORS = ['red', 'orange', 'yellow', 'white', 'white', 'white', 'white']

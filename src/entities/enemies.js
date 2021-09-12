@@ -13,16 +13,16 @@ export const Enemies = (scene) => {
   return {
     pool,
     bullets,
-    spawn({ x, y, level = 1 }) {
-      const number = randInt(1, level + 1)
+    spawn({ x, y, number = 1, level = 1 }) {
       for (let i = 0; i < number; i++) {
         const enemy = pool.get({
           x,
           y,
           anchor: { x: 0.5, y: 0.5 },
-          width: 20,
-          height: 20,
-          health: 5 * level,
+          width: 35,
+          height: 35,
+          level,
+          health: 10 * level + randInt(0, 10 * level),
           strength: 1 * level,
           speed: 1 + 0.1 * level,
           color: 'red',
@@ -62,9 +62,9 @@ class Enemy extends ShipSprite {
     this.scene.pickups.get(this)
   }
 
-  getNewTarget() {
+  getNewTarget(dist = 50) {
     const { x, y } = this.scene.player.sprite
-    return { x: x + randInt(-100, 100), y: y + randInt(-100, 100) }
+    return { x: x + randInt(-dist, dist), y: y + randInt(-dist, dist) }
   }
 
   update() {
@@ -72,24 +72,29 @@ class Enemy extends ShipSprite {
     if (!this.isAlive()) return
     if (this.bulletTimer > 0) this.bulletTimer--
     if (this.bulletTimer === 0) {
-      this.bulletTimer = 100
+      this.bulletTimer = 400 - this.level * 80 + randInt(-100, 100)
       this.bullets.get(this, this.getNewTarget(), { damage: this.strength })
     }
 
     if (!this.target) {
-      this.target = this.getNewTarget()
+      this.target = this.getNewTarget(400)
     }
     const distToTarget = getDist(this, this.target)
-
     const angle = angleToTarget(this, this.target) - 1.57
-    const speed = distToTarget < 100 ? 0 : this.speed
+    const speed =
+      distToTarget <= 200 || getDist(this, this.scene.player.sprite) < 100
+        ? 0
+        : this.speed
     this.dy = speed * Math.sin(angle)
     this.dx = speed * Math.cos(angle)
 
-    if (distToTarget < 100) {
+    if (distToTarget <= 200) {
+      if (this.triggered) return
       setTimeout(() => {
-        this.target = this.getNewTarget()
-      }, randInt(200, 1000))
+        this.triggered = false
+        this.target = this.getNewTarget(400)
+      }, randInt(500, 1500))
+      this.triggered = true
     }
   }
 }

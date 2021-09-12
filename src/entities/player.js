@@ -6,9 +6,8 @@ import {
   setStoreItem,
 } from 'kontra'
 import { ShipSprite } from './sprite'
-import { Bullets } from './bullets'
+import { Bullets, Circle } from './bullets'
 import { UPGRADES } from './station'
-import { Triangle } from './hud'
 
 export const Player = ({ scene, x, y }) => {
   const upgrades = getStoreItem('player')?.upgrades || {}
@@ -22,8 +21,8 @@ export const Player = ({ scene, x, y }) => {
     y: lastPlanet?.y || y,
     anchor: { x: 0.5, y: 0.5 },
     color: '#666',
-    width: 30,
-    height: 30,
+    width: 50,
+    height: 50,
     gold: getStoreItem('player')?.gold || 0,
     upgrades: upgrades,
     health: getStoreItem('player')?.health || 100,
@@ -34,21 +33,19 @@ export const Player = ({ scene, x, y }) => {
       maxHealth: 100,
       guncount: 1,
       gundelay: 30,
-      gunspeed: 5,
+      gunspeed: 8,
       gunsize: 5,
-      guncolor: 'yellow',
+      guncolor: 'white',
       gunspread: 0,
       gundamage: 10,
     },
   })
-  let thrust = new Triangle({
-    x: 400,
-    y: 400,
-    color: 'white',
-    anchor: { x: 0.5, y: 0.5 },
-    rotation: 1.57 * 0,
+  let thrust = new Circle({
     width: 15,
     height: 15,
+    r: 200,
+    g: 200,
+    b: 255,
   })
 
   Object.entries(upgrades).forEach(([k, v]) => {
@@ -115,9 +112,8 @@ export const Player = ({ scene, x, y }) => {
     },
     move(dir) {
       thrust.scaleX = 1
-      thrust.rotation = 1.57 * dir
-      thrust.x = 400 + (dir === 0 || dir === 2 ? 0 : dir === 1 ? -35 : 35)
-      thrust.y = 400 + (dir === 1 || dir === 3 ? 0 : dir === 2 ? -35 : 35)
+      thrust.x = 400 + (dir === 0 || dir === 2 ? 0 : dir === 1 ? -24 : 24)
+      thrust.y = 400 + (dir === 1 || dir === 3 ? 0 : dir === 2 ? -24 : 24)
     },
     update() {
       sprite.ddx = 0
