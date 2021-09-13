@@ -48,7 +48,7 @@ export const GameScene = ({ canvas, onWin }) => {
     if (map.active) {
       const stats = planetStats(object._x, object._y, scene.seed)
       if (stats.health > 0) return
-      playSound('shoot')
+      playSound('teleport')
       _player.x = stats.x
       _player.y = stats.y
       _player.dx = 0
@@ -57,7 +57,11 @@ export const GameScene = ({ canvas, onWin }) => {
       if (object.type === 'store') {
         const currentLevel = player.sprite.upgrades[object.upgrade.key] || 1
         const cost = object.upgrade.getCost(currentLevel + 1)
-        if (currentLevel >= object.upgrade.max || _player.gold < cost) return
+        if (currentLevel >= object.upgrade.max || _player.gold < cost) {
+          playSound('deny')
+          return
+        }
+        playSound('confirm')
         _player.setUpgrade(object.upgrade, currentLevel + 1)
         _player.setGold(_player.gold - cost)
       }
@@ -90,6 +94,7 @@ export const GameScene = ({ canvas, onWin }) => {
         (bullet, enemy) => {
           enemy.damage(bullet.damage)
           bullet.ttl = 0
+          playSound(enemy.isPlanet ? 'planetHit' : 'enemyHit')
         },
       )
 
@@ -97,6 +102,7 @@ export const GameScene = ({ canvas, onWin }) => {
         enemies.bullets.getAliveObjects(),
         [player.sprite],
         (bullet, player) => {
+          playSound('playerHit')
           player.damage(bullet.damage)
           bullet.ttl = 0
         },
@@ -116,6 +122,7 @@ export const GameScene = ({ canvas, onWin }) => {
         (pickup, player) => {
           player.setGold(player.gold + pickup.value)
           hud.setText(pickup.value)
+          playSound('pickup')
           pickup.ttl = 0
         },
       )

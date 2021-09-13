@@ -33,6 +33,7 @@ export const Enemies = (scene) => {
             color: ['white', 'yellow', 'orange', 'red'][level - 1],
           })
           if (!enemy) return
+          playSound('spawn')
           if (!scene.children.includes(enemy)) {
             scene.addChild(enemy)
           }
@@ -65,6 +66,7 @@ class Enemy extends ShipSprite {
 
   die() {
     super.die()
+    playSound('enemyDie')
     if (randInt(0, 1) === 0) return
     const multi = randInt(0, 5) === 0 ? 2 : 1
     this.scene.pickups.get({

@@ -134,7 +134,7 @@ export const UPGRADES = shuffle([
     max: 4,
     getCost: baseGetCost(200, 4),
     apply: (n, sprite) => {
-      sprite.stats.gundelay = 5 + (30 - n * 7)
+      sprite.stats.gundelay = 5 + (30 - n * 5)
     },
   },
   {

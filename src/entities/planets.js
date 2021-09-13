@@ -94,7 +94,7 @@ export const planetStats = (
     maxHealth = [200, 600, 1200, 2400][level - 1]
     health = typeof health === 'number' ? health : maxHealth
     color = health > 0 ? COLORS[level - 1] : 'blue'
-    if (typeof index !== 'number' && health < maxHealth) {
+    if (typeof index !== 'number') {
       const store = getStoreItem('planets') || {}
       index = Object.keys(store).length - 1
       setStoreItem('planets', {
@@ -102,7 +102,7 @@ export const planetStats = (
         [`${_x}-${_y}`]: { ...item, index },
       })
     }
-    upgradeType = item?.index % 5 || 0
+    upgradeType = index % 5
   }
   const final = {
     _x,
@@ -159,12 +159,14 @@ export class Planet extends Sprite {
         value: randInt(10, 20) * this.level * multi,
       })
     }
-
-    this.parent?.map.forceUpdate()
+    playSound('convert')
     const store = getStoreItem('planets') || {}
     const numCaptured = Object.values(store).filter((p) => p.health <= 0).length
-    if (numCaptured >= 20) this.parent.onWin()
+    if (numCaptured >= 30) this.parent.onWin()
     this.color = 'blue'
+    setTimeout(() => {
+      this.parent?.map.forceUpdate()
+    }, 100)
   }
 
   render() {

@@ -86,6 +86,9 @@ export const Player = ({ scene, x: originX, y: originY }) => {
     shutdown() {},
 
     repair() {
+      if (sprite.stats.maxHealth === sprite.health) return
+      playSound('repair')
+
       damage(-sprite.stats.maxHealth + sprite.health)
     },
     shoot() {
@@ -147,6 +150,8 @@ export const Player = ({ scene, x: originX, y: originY }) => {
       if (sprite.health <= 0 && !sprite.deathTriggered) {
         scene.enemies.pool.objects.forEach((o) => (o.ttl = 0))
         sprite.deathTriggered = true
+        playSound('playerDie')
+
         setTimeout(() => {
           sprite.deathTriggered = false
           sprite.x = lastPlanet?.x || originX
@@ -164,6 +169,7 @@ export const Player = ({ scene, x: originX, y: originY }) => {
         bulletTimer <= 0 &&
         !scene.station.active
       ) {
+        playSound('shoot')
         this.shoot()
       }
     },
