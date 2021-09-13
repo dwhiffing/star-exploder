@@ -15,7 +15,7 @@ export const Enemies = (scene) => {
     bullets,
     spawn({ x, y, number = 1, level = 1 }) {
       for (let i = 0; i < number; i++) {
-        const health = 10 + Math.pow(4, level)
+        const health = 15 + Math.pow(4, level)
         setTimeout(() => {
           const enemy = pool.get({
             x,
@@ -26,10 +26,10 @@ export const Enemies = (scene) => {
             level,
             healthBar: true,
             health,
+            ttl: Infinity,
             maxHealth: health,
             strength: 5 + 1 * level,
-            speed: 1 + level,
-            ttl: 8000,
+            speed: 1 + level / 1.5,
             color: ['white', 'yellow', 'orange', 'red'][level - 1],
           })
           if (!enemy) return
@@ -52,7 +52,7 @@ export const Enemies = (scene) => {
   }
 }
 
-const ENEMY_COUNT = 20
+const ENEMY_COUNT = 50
 
 class Enemy extends ShipSprite {
   constructor(properties) {
@@ -83,8 +83,8 @@ class Enemy extends ShipSprite {
     super.update()
     if (!this.isAlive()) return
     if (this.bulletTimer > 0) this.bulletTimer--
-    if (this.bulletTimer === 0) {
-      this.bulletTimer = 300 - this.level * 80 + randInt(-100, 100)
+    if (this.bulletTimer <= 0) {
+      this.bulletTimer = 300 + randInt(-100, 100) - this.level * 50
       this.bullets.get(this, this.getNewTarget(), {
         damage: this.strength,
         speed: 5,

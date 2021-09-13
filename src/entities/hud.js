@@ -39,7 +39,7 @@ export const Hud = (scene) => {
         arrows[i].y = Math.sin(planet.angle) * -60 + 400
         arrows[i].rotation = planet.angle + 1.57
         arrows[i].color = planet.color
-        arrows[i].opacity = Math.max(0, 1 - planet.dist / 20000)
+        arrows[i].opacity = Math.max(0, 1 - planet.dist / 15000)
         const mult = 2 - clamp(1, planet.dist / 5000, 2.5)
         arrows[i].width = 13 * mult
         arrows[i].height = 6 * mult

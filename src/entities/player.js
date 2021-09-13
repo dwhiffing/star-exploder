@@ -144,8 +144,11 @@ export const Player = ({ scene, x: originX, y: originY }) => {
       sprite.update()
       bullets.update()
 
-      if (sprite.health <= 0) {
+      if (sprite.health <= 0 && !sprite.deathTriggered) {
+        scene.enemies.pool.objects.forEach((o) => (o.ttl = 0))
+        sprite.deathTriggered = true
         setTimeout(() => {
+          sprite.deathTriggered = false
           sprite.x = lastPlanet?.x || originX
           sprite.y = lastPlanet?.y || originY
           sprite.health = sprite.stats.maxHealth
@@ -155,7 +158,12 @@ export const Player = ({ scene, x: originX, y: originY }) => {
       }
 
       if (bulletTimer > 0) bulletTimer--
-      if (pointerPressed('left') && bulletTimer <= 0 && !scene.station.active) {
+      if (
+        pointerPressed('left') &&
+        sprite.health > 0 &&
+        bulletTimer <= 0 &&
+        !scene.station.active
+      ) {
         this.shoot()
       }
     },

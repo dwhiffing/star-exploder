@@ -1,4 +1,4 @@
-import { getStoreItem, randInt, setStoreItem } from 'kontra'
+import { clamp, getStoreItem, randInt, setStoreItem } from 'kontra'
 import { COORDS, getDist, hashCode, gradient } from '../utils'
 import { drawHealthBar, Sprite } from './sprite'
 import { Pool } from './pool'
@@ -21,13 +21,13 @@ export const Planets = (scene, opts = {}) => {
           .filter((p) => p.width > 0 && p.color !== 'blue')
           .map((p) => ({ p, dist: getDist(p, scene.player.sprite) }))
           .sort((a, b) => a.dist - b.dist)[0]?.p
-        // TODO: sometimes not spawning
         if (planet) {
           const { x, y, level = 1 } = planet
-          const maxSpawns = Math.floor(3 + level * 2)
-          const enemiesPerSpawn = Math.floor(1 + level)
-          if (scene.enemies.pool.getAliveObjects().length < maxSpawns) {
-            spawnTimer = 700 - level * 100
+          const maxSpawns = Math.floor(1 + level)
+          const currentSpawns = scene.enemies.pool.getAliveObjects().length
+          const enemiesPerSpawn = clamp(1, level, maxSpawns - currentSpawns)
+          if (currentSpawns < maxSpawns) {
+            spawnTimer = 600
             scene.enemies.spawn({
               x,
               y,
@@ -91,7 +91,7 @@ export const planetStats = (
     const item = store[`${_x}-${_y}`] || {}
     health = item?.health
     index = item?.index
-    maxHealth = [120, 240, 500, 1000][level - 1]
+    maxHealth = [200, 600, 1200, 2400][level - 1]
     health = typeof health === 'number' ? health : maxHealth
     color = health > 0 ? COLORS[level - 1] : 'blue'
     if (typeof index !== 'number' && health < maxHealth) {
@@ -158,7 +158,7 @@ export class Planet extends Sprite {
         this.parent.pickups.get({
           x: this.x + randInt(-100, 100),
           y: this.y + randInt(-100, 100),
-          value: randInt(6, 10) * this.level * multi,
+          value: randInt(10, 20) * this.level * multi,
         })
       }, i * 10)
     }
@@ -181,7 +181,6 @@ export class Planet extends Sprite {
       })
     }
     var pad = 1.25
-    // TODO: different colors for planets
     const canvas = mkStar({
       pad,
       r: this.size / 2,
