@@ -31,7 +31,7 @@ export const Planets = (scene, opts = {}) => {
             scene.enemies.spawn({
               x,
               y,
-              number: randInt(Math.round(enemiesPerSpawn / 2), enemiesPerSpawn),
+              number: enemiesPerSpawn,
               level,
             })
           }
@@ -86,7 +86,6 @@ export const planetStats = (
       { x: 34800, y: 34800 },
     )
     level = Math.min(4, Math.floor(distanceToCenter / 30000) + 1)
-    // level = Math.min(4, Math.floor(distanceToCenter / 10000) + 1)
 
     size = 100 + 75 * level
     const item = store[`${_x}-${_y}`] || {}
