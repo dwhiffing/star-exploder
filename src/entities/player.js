@@ -121,9 +121,8 @@ export const Player = ({ scene, x: originX, y: originY }) => {
       const { speed, maxSpeed, breakSpeed } = sprite.stats
       thrust.scaleX = 0
 
-      if (keyPressed('n')) {
-        if (this.triggered) return
-        setTimeout(() => (triggered = false), 100)
+      if (keyPressed('n') && !this.triggered) {
+        setTimeout(() => (this.triggered = false), 1000)
         window.toggleMute()
         this.triggered = true
       }
