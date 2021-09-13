@@ -21,15 +21,14 @@ const startGame = () => {
 
 const startMenu = () => {
   scene && scene.shutdown()
-  scene = MenuScene({ canvas, onNew: startGame, onContinue: startGame })
+  scene = MenuScene({ canvas, onNew: newGame, onContinue: startGame })
 }
 
 const startWin = () => {
   scene && scene.shutdown()
   scene = WinScene({ canvas, onNew: newGame })
 }
-// startMenu()
-startGame()
+startMenu()
 
 GameLoop({
   update: (...rest) => scene && scene.update(...rest),

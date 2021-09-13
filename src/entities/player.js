@@ -121,6 +121,13 @@ export const Player = ({ scene, x: originX, y: originY }) => {
       const { speed, maxSpeed, breakSpeed } = sprite.stats
       thrust.scaleX = 0
 
+      if (keyPressed('n')) {
+        if (this.triggered) return
+        setTimeout(() => (triggered = false), 100)
+        window.toggleMute()
+        this.triggered = true
+      }
+
       if (keyPressed('up') || keyPressed('w')) {
         this.move(0)
         if (sprite.dy > -maxSpeed) sprite.ddy = -speed

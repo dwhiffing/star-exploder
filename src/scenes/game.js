@@ -32,6 +32,7 @@ export const GameScene = ({ canvas, onWin }) => {
   let enemies = Enemies(scene)
   let pickups = Pickups(scene)
   let station = Station(scene)
+  let playhitSound = true
 
   scene.player = player
   scene.pickups = pickups
@@ -94,7 +95,11 @@ export const GameScene = ({ canvas, onWin }) => {
         (bullet, enemy) => {
           enemy.damage(bullet.damage)
           bullet.ttl = 0
-          playSound(enemy.isPlanet ? 'planetHit' : 'enemyHit')
+          if (playhitSound) {
+            playhitSound = false
+            setTimeout(() => (playhitSound = true), 100)
+            playSound(enemy.isPlanet ? 'planetHit' : 'enemyHit')
+          }
         },
       )
 
