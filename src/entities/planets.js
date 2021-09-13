@@ -138,7 +138,6 @@ export class Planet extends Sprite {
       ...getStoreItem('planets'),
       [key]: { ...(planets[key] || {}), health: this.health },
     })
-    this.parent?.map.forceUpdate()
   }
   land() {
     if (
@@ -154,15 +153,14 @@ export class Planet extends Sprite {
     this.health = 0
     for (let i = 0; i < this.level * 20; i++) {
       const multi = randInt(0, 5) === 0 ? 2 : 1
-      setTimeout(() => {
-        this.parent.pickups.get({
-          x: this.x + randInt(-100, 100),
-          y: this.y + randInt(-100, 100),
-          value: randInt(10, 20) * this.level * multi,
-        })
-      }, i * 10)
+      this.parent.pickups.get({
+        x: this.x + randInt(-100, 100),
+        y: this.y + randInt(-100, 100),
+        value: randInt(10, 20) * this.level * multi,
+      })
     }
 
+    this.parent?.map.forceUpdate()
     const store = getStoreItem('planets') || {}
     const numCaptured = Object.values(store).filter((p) => p.health <= 0).length
     if (numCaptured >= 20) this.parent.onWin()
