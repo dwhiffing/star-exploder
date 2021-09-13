@@ -10,12 +10,12 @@ import { Bullets, Circle } from './bullets'
 import { UPGRADES } from './station'
 
 export const Player = ({ scene, x: originX, y: originY }) => {
-  const upgrades = getStoreItem('player')?.upgrades || {}
+  const upgrades = getStoreItem('starexploder:player')?.upgrades || {}
 
   let bulletTimer = 0
   const bullets = Bullets(scene)
   const { width, height } = scene.context.canvas
-  const lastPlanet = getStoreItem('last-planet')
+  const lastPlanet = getStoreItem('starexploder:last-planet')
   let sprite = new ShipSprite({
     x: lastPlanet?.x || originX,
     y: lastPlanet?.y || originY,
@@ -23,9 +23,9 @@ export const Player = ({ scene, x: originX, y: originY }) => {
     color: '#666',
     width: 50,
     height: 50,
-    gold: getStoreItem('player')?.gold || 0,
+    gold: getStoreItem('starexploder:player')?.gold || 0,
     upgrades: upgrades,
-    health: getStoreItem('player')?.health || 100,
+    health: getStoreItem('starexploder:player')?.health || 100,
     stats: {
       speed: 0.1,
       breakSpeed: 1,
@@ -60,22 +60,25 @@ export const Player = ({ scene, x: originX, y: originY }) => {
   const oldDamage = sprite.damage.bind(sprite)
   const damage = (n) => {
     oldDamage(n)
-    const current = getStoreItem('player') || {}
-    setStoreItem('player', { ...current, health: sprite.health })
+    const current = getStoreItem('starexploder:player') || {}
+    setStoreItem('starexploder:player', { ...current, health: sprite.health })
   }
   sprite.damage = damage
   const setUpgrade = (upgrade, value) => {
     upgrade.apply(value, sprite)
     sprite.upgrades[upgrade.key] = value
-    const current = getStoreItem('player') || {}
-    setStoreItem('player', { ...current, upgrades: sprite.upgrades })
+    const current = getStoreItem('starexploder:player') || {}
+    setStoreItem('starexploder:player', {
+      ...current,
+      upgrades: sprite.upgrades,
+    })
   }
   sprite.setUpgrade = setUpgrade
 
   const setGold = (n = 1) => {
     sprite.gold = n
-    const current = getStoreItem('player') || {}
-    setStoreItem('player', { ...current, gold: sprite.gold })
+    const current = getStoreItem('starexploder:player') || {}
+    setStoreItem('starexploder:player', { ...current, gold: sprite.gold })
   }
   sprite.setGold = setGold
 

@@ -61,10 +61,10 @@ export const checkCollisions = (groupA, groupB, onCollide) => {
 }
 
 export const getSeed = () => {
-  const storedSeed = getStoreItem('seed')
+  const storedSeed = getStoreItem('starexploder:seed')
   if (storedSeed) return storedSeed
   const seed = generateSeed()
-  setStoreItem('seed', seed)
+  setStoreItem('starexploder:seed', seed)
   return seed
 }
 

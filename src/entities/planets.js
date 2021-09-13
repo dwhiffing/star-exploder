@@ -76,7 +76,7 @@ export const planetStats = (
   let level = 0
   let size = 0
   if (isPlanet) {
-    const store = getStoreItem('planets') || {}
+    const store = getStoreItem('starexploder:planets') || {}
     // distance calculation needs to ignore passed chunk size
     const realChunkSize = 800 * PLANET_CHUNK_FACTOR
     const realX = _x * realChunkSize + realChunkSize / 2
@@ -95,9 +95,9 @@ export const planetStats = (
     health = typeof health === 'number' ? health : maxHealth
     color = health > 0 ? COLORS[level - 1] : 'blue'
     if (typeof index !== 'number') {
-      const store = getStoreItem('planets') || {}
+      const store = getStoreItem('starexploder:planets') || {}
       index = Object.keys(store).length - 1
-      setStoreItem('planets', {
+      setStoreItem('starexploder:planets', {
         ...store,
         [`${_x}-${_y}`]: { ...item, index },
       })
@@ -132,10 +132,10 @@ export class Planet extends Sprite {
   damage(n) {
     if (this.health <= 0) return
     super.damage(n)
-    const planets = getStoreItem('planets') || {}
+    const planets = getStoreItem('starexploder:planets') || {}
     const key = `${this._x}-${this._y}`
-    setStoreItem('planets', {
-      ...getStoreItem('planets'),
+    setStoreItem('starexploder:planets', {
+      ...getStoreItem('starexploder:planets'),
       [key]: { ...(planets[key] || {}), health: this.health },
     })
   }
@@ -146,7 +146,7 @@ export class Planet extends Sprite {
       this.color === 'blue'
     ) {
       this.parent.station.open(this)
-      setStoreItem('last-planet', { x: this.x, y: this.y })
+      setStoreItem('starexploder:last-planet', { x: this.x, y: this.y })
     }
   }
   die() {
@@ -160,7 +160,7 @@ export class Planet extends Sprite {
       })
     }
     playSound('convert')
-    const store = getStoreItem('planets') || {}
+    const store = getStoreItem('starexploder:planets') || {}
     const numCaptured = Object.values(store).filter((p) => p.health <= 0).length
     if (numCaptured >= 30) this.parent.onWin()
     this.color = 'blue'

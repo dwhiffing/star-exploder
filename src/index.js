@@ -1,4 +1,4 @@
-import { init, initPointer, initKeys, GameLoop } from 'kontra'
+import { init, initPointer, initKeys, GameLoop, setStoreItem } from 'kontra'
 import { GameScene, MenuScene } from './scenes'
 import { WinScene } from './scenes/win'
 
@@ -10,7 +10,10 @@ initKeys()
 let scene
 
 const newGame = () => {
-  localStorage.clear()
+  setStoreItem('starexploder:seed', null)
+  setStoreItem('starexploder:planets', null)
+  setStoreItem('starexploder:last-planet', null)
+  setStoreItem('starexploder:player', null)
   startGame()
 }
 

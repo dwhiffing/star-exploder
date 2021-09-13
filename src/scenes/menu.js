@@ -36,7 +36,7 @@ export const MenuScene = ({ canvas, onNew, onContinue }) => {
     },
   })
   let button2
-  if (localStorage.getItem('planets')) {
+  if (localStorage.getItem('starexploder:planets')) {
     button2 = Button({
       x: width / 2,
       y: height / 2 + 220,
